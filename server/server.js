@@ -1,28 +1,48 @@
 const express = require('express')
+const config = require('./config/key')
+const mongoose = require('mongoose')
+const { pusher } = require('./helpers/Pusher')
+const cors = require('cors')
+
+// app config
 const app = express()
 const PORT = process.env.PORT || 9000
-const config = require('./config/key')
-const bodyParser = require('body-parser')
 
 // middleware
 app.use(express.json())
+app.use(cors())
 
+// route
 app.get('/', (req, res) => {
    res.send('server is running on')
 })
+app.use('/api/v1/message', require('./routes/message'))
 
 
-const mongoose = require('mongoose')
+// DB Config
 mongoose.connect(config.mongoURI, 
    {
       useCreateIndex: true,
       useNewUrlParser: true, 
       useUnifiedTopology: true,
-   })
-   .then(() => { console.log('MongoDB connected!')})
-   .catch((err) => { console.log('Error', err) });
+   }).then((result) => {
+      console.log('Connected!')
+      const messageCollection = result.connection.collection('messages')
+      const changeSteram = messageCollection.watch()
+      changeSteram.on('change', (change) => {
+         console.log(change)
 
-app.use('/api/v1/message', require('./routes/message'))
+         if(change.operationType === 'insert') {
+            const messageDetails = change.fullDocument
+            pusher.trigger('messages', 'inserted', {
+               name: messageDetails.name,
+               message: messageDetails.message
+            })
+         }
+      })
+   }).catch((err) => {
+      console.log('Failed Connect')
+   });
 
 
 

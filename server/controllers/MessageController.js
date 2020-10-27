@@ -1,8 +1,8 @@
-const {Message} = require('../models/Message')
+const {Messages} = require('../models/Message')
 
 
 const messageNew = (req, res) => {
-   const dbMessage = new Message(req.body)
+   const dbMessage = new Messages(req.body)
    dbMessage.save((err, data) => {
       if (err) return res.status(500).send(err);
       res.status(201).send(data)
