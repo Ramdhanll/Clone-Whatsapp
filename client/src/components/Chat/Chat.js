@@ -1,14 +1,44 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import './Chat.css';
-
+import axios from '../../helpers/axios'
 import { Avatar, IconButton } from '@material-ui/core'
 import { SearchOutlined, AttachFile, MoreVert, InsertEmoticon, Mic } from '@material-ui/icons'
 
-function Chat() {
+function Chat({messages}) {
    const [input, setInput] = useState("")
+   const chatBodyRef = useRef()
+
+   // scroll to bottom after get new message
+   useEffect(() => {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight - (chatBodyRef.current.clientHeight + 50)
+   }, [messages])
+
+   const renderMessages = () => (
+      messages.map((message, index) => (
+         <p key={index} className={`chat__message ${message.received ? "chat__received" : null}`}>
+            <span className="chat__name">{message.name}</span>
+            {message.message}
+            <span className="chat__timestamp">
+               {message.timestamp}
+            </span>
+         </p>
+      ))
+   )
 
    const sendMessage = (e) => {
+      e.preventDefault();
+      if(input.trim() === "") return
 
+      console.log(chatBodyRef)
+      axios.post('/message/new', {
+         message: input,
+         name: "hulk",
+         received: false,
+         timestamp: "2 August 2020"
+      })
+      .then(() => {
+         setInput("")
+      })
    }
 
    return (
@@ -34,30 +64,10 @@ function Chat() {
             </div>
          </div>
 
-         <div className="chat__body">
-            <p className="chat__message">
-               <span className="chat__name">Ramadhani</span>
-               This is a message
-               <span className="chat__timestamp">
-                  {new Date().toUTCString()}
-               </span>
-            </p>
-
-            <p className="chat__message chat__receiver">
-               <span className="chat__name">Ramadhani</span>
-               This is a message
-               <span className="chat__timestamp">
-                  {new Date().toUTCString()}
-               </span>
-            </p>
-
-            <p className="chat__message">
-               <span className="chat__name">Ramadhani</span>
-               This is a message
-               <span className="chat__timestamp">
-                  {new Date().toUTCString()}
-               </span>
-            </p>
+         <div className="chat__body" ref={chatBodyRef}>
+            {
+               renderMessages()
+            }
          </div>
 
          <div className="chat__footer">
@@ -68,6 +78,7 @@ function Chat() {
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Type a message"
                   type="text"
+                  autoFocus
                />
                <button onClick={sendMessage}
                type="submit">

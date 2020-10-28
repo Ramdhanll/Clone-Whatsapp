@@ -11,7 +11,7 @@ const messageNew = (req, res) => {
 }
 
 const sync = (req, res) => {
-   Message.find((err, data) => {
+   Messages.find((err, data) => {
       if (err) res.status(500).send(err)
       res.status(200).send(data)
    })

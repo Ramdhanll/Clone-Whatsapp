@@ -26,17 +26,19 @@ mongoose.connect(config.mongoURI,
       useNewUrlParser: true, 
       useUnifiedTopology: true,
    }).then((result) => {
-      console.log('Connected!')
+      console.log('DB Connected!')
       const messageCollection = result.connection.collection('messages')
       const changeSteram = messageCollection.watch()
       changeSteram.on('change', (change) => {
-         console.log(change)
-
+         // console.log(change)
          if(change.operationType === 'insert') {
             const messageDetails = change.fullDocument
             pusher.trigger('messages', 'inserted', {
+               _id: messageDetails._id,
+               message: messageDetails.message,
                name: messageDetails.name,
-               message: messageDetails.message
+               received: messageDetails.received,
+               timestamp: messageDetails.timestamp
             })
          }
       })
