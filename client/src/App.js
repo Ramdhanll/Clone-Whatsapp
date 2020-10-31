@@ -5,6 +5,27 @@ import Chat from './components/Chat/Chat';
 import Pusher from 'pusher-js'
 import axios from './helpers/axios'
 
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom'
+import Login from './components/Auth/Login/Login'
+import Register from './components/Auth/Register/Register'
+
+function Routing() {
+
+  return (
+    <Switch>
+      <Route exact path="/">
+        <p>jaa</p>
+      </Route>
+      <Route exact path="/login">
+          <Login />
+      </Route>
+      <Route exact path="/register">
+          <Register/>
+      </Route>
+    </Switch>
+  )
+}
+
 function App() {
   const [messages, setMessages] = useState([])
 
@@ -31,16 +52,24 @@ function App() {
     }
   }, [messages])
   
-  console.log(messages)
-  
   return (
     <div className="app">
-      <div className="app__body">
-        <Sidebar />
-        <Chat messages={messages} />
-      </div>
+      <Router>
+        <Routing/>
+        <div className="app__body">
+
+        </div>
+      </Router>
     </div>
   );
+  // return (
+  //   <div className="app">
+  //     <div className="app__body">
+  //       <Sidebar />
+  //       <Chat messages={messages} />
+  //     </div>
+  //   </div>
+  // );
 }
 
 export default App;

@@ -1,0 +1,19 @@
+.login {
+   background-color: black;
+   height: 100vh;
+}
+
+.login__header {
+   height: 35%;
+   background-color: #00BFA5;
+}
+
+.login__body {
+   display: flex;
+   margin: 10px auto;
+   background-color: #ededed;
+   margin-top: -140px;
+   height: 80vh;
+   width: 80vw;
+   box-shadow: -1px 4px 20px -6px rgba(0, 0, 0, 0.75);
+}
