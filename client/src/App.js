@@ -10,23 +10,6 @@ import Login from './components/Auth/Login/Login'
 import Register from './components/Auth/Register/Register'
 
 function Routing() {
-
-  return (
-    <Switch>
-      <Route exact path="/">
-        <p>jaa</p>
-      </Route>
-      <Route exact path="/login">
-          <Login />
-      </Route>
-      <Route exact path="/register">
-          <Register/>
-      </Route>
-    </Switch>
-  )
-}
-
-function App() {
   const [messages, setMessages] = useState([])
 
   useEffect(() => {
@@ -51,14 +34,32 @@ function App() {
       channel.unsubscribe()
     }
   }, [messages])
-  
+
+  return (
+    <Switch>
+      <Route exact path="/">
+        <div className="chat__parent">
+          <div className="chat__parent__body">
+            <Sidebar/>
+            <Chat messages={messages} />
+          </div>
+        </div>
+      </Route>
+      <Route exact path="/login">
+          <Login />
+      </Route>
+      <Route exact path="/register">
+          <Register/>
+      </Route>
+    </Switch>
+  )
+}
+
+function App() {
   return (
     <div className="app">
       <Router>
         <Routing/>
-        <div className="app__body">
-
-        </div>
       </Router>
     </div>
   );
