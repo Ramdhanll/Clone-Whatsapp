@@ -1,6 +1,7 @@
 import React from 'react'
 import './Login.css'
 import { Formik, Field } from 'formik'
+import { Link } from 'react-router-dom'
 import * as Yup from 'yup'
 import {
    Input,
@@ -13,14 +14,16 @@ import {
 
 function Login(props) {
    const initialValues = {
-      email: '',
+      numberPhone: '',
       password: ''
    }
 
+   const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+
    const validationSchema = Yup.object().shape({
-      email: Yup.string()
-               .email('Email is invalid!')
-               .required('Email is required!'),
+      numberPhone: Yup.string()
+                  .matches(phoneRegExp, 'Phone number is not valid')
+                  .required('Phone number is required'),
       password: Yup.string()
                .min(6, 'Password must be at least 6 characters')
                .required('Password is required')
@@ -42,7 +45,7 @@ function Login(props) {
             <div className="login__left">
                <h1>To use WhatssApp Clone on Your Computer:</h1>
                <ol>
-                  <li>Remember your number and password</li>
+                  <li>Remember your number phone and password</li>
                   <li>Fill in all login form</li>
                   <li>Happy Chatting!</li>
                </ol>
@@ -56,16 +59,15 @@ function Login(props) {
                   {props => (
                      <div className="login__form">
                         <form onSubmit={props.handleSubmit}>
-                           <Field name="email">
+                           <Field name="numberPhone">
                               {
                               ({ field, form }) => (
-                                 <FormControl w="100%" isInvalid={form.errors.email && form.touched.email && form.errors.email}>
-                                    <FormLabel fontSize='1em' htmlFor="email">Email</FormLabel>
+                                 <FormControl w="100%" isInvalid={form.errors.numberPhone && form.touched.numberPhone && form.errors.numberPhone}>
+                                    <FormLabel fontSize='1em' htmlFor="numberPhone">Phone Number</FormLabel>
                                     <Input
                                        {...field}
-                                       id="email" 
-                                       placeholder="email" />
-                                    <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+                                       id="numberPhone" />
+                                    <FormErrorMessage>{form.errors.numberPhone}</FormErrorMessage>
                                  </FormControl>
                               )}
                            </Field>
@@ -73,12 +75,11 @@ function Login(props) {
                               {
                               ({ field, form }) => (
                                  <FormControl w="100%" marginTop="15px" isInvalid={form.errors.password && form.touched.password && form.errors.password}>
-                                    <FormLabel fontSize='1em' htmlFor="password">password</FormLabel>
+                                    <FormLabel fontSize='1em' htmlFor="password">Password</FormLabel>
                                     <Input
                                        {...field}
                                        type="password"
-                                       id="password" 
-                                       placeholder="password" />
+                                       id="password" />
                                     <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                                  </FormControl>
                               )}
@@ -95,8 +96,9 @@ function Login(props) {
                      </div>
                   )}
                </Formik>
+
+               <Link to="/register" className="login__link">Create a Account</Link>
             </div>
-            
          </div>
       </div>
    )
