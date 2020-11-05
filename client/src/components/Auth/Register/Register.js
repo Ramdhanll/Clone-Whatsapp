@@ -16,7 +16,7 @@ function Register(props) {
    const initialValues = {
       name: '',
       email: '',
-      numberPhone: '',
+      phoneNumber: '',
       password: '',
       passwordConfirmation : ''
    }
@@ -31,7 +31,7 @@ function Register(props) {
       email: Yup.string()
                .email('Email is invalid!')
                .required('Email is required!'),
-      numberPhone: Yup.string()
+      phoneNumber: Yup.string()
                .matches(phoneRegExp, 'Phone number is not valid')
                .required('Phone number is required'),
       password: Yup.string()
@@ -95,15 +95,15 @@ function Register(props) {
                                  </FormControl>
                               )}
                            </Field>
-                           <Field name="numberPhone">
+                           <Field name="phoneNumber">
                               {
                               ({ field, form }) => (
-                                 <FormControl w="100%" isInvalid={form.errors.numberPhone && form.touched.numberPhone && form.errors.numberPhone}>
-                                    <FormLabel fontSize='1em' htmlFor="numberPhone" mb={1} mt={3}>Phone Number</FormLabel>
+                                 <FormControl w="100%" isInvalid={form.errors.phoneNumber && form.touched.phoneNumber && form.errors.phoneNumber}>
+                                    <FormLabel fontSize='1em' htmlFor="phoneNumber" mb={1} mt={3}>Phone Number</FormLabel>
                                     <Input
                                        {...field}
-                                       id="numberPhone" />
-                                    <FormErrorMessage mb={3}>{form.errors.numberPhone}</FormErrorMessage>
+                                       id="phoneNumber" />
+                                    <FormErrorMessage mb={3}>{form.errors.phoneNumber}</FormErrorMessage>
                                  </FormControl>
                               )}
                            </Field>

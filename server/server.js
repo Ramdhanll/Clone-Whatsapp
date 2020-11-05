@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
    res.send('server is running on')
 })
 app.use('/api/v1/message', require('./routes/message'))
+app.use('/api/v1/auth', require('./routes/auth'))
 
 
 // DB Config
