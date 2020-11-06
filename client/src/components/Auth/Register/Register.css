@@ -1,6 +1,7 @@
 .register {
    background-color: black;
    height: 100vh;
+   overflow: hidden;
 }
 
 .register__header {

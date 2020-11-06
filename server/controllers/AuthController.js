@@ -31,7 +31,7 @@ const register = (req, res) => {
                   user.password = hash
                   user.save()
                   .then((result) => {
-                     res.status(200).json({ success: true, mesage: 'saved successfully'})
+                     res.status(200).json({ success: true, message: 'Registration is successfully'})
                   }).catch((err) => {
                      res.status(422).json("saved failed")
                   });
@@ -45,6 +45,32 @@ const register = (req, res) => {
       
 }
 
+const login = (req, res) => {
+   const { phoneNumber, password} = req.body
+
+   if(!phoneNumber) return res.status(422).json({ success: false, message: 'the field phone number is required!'})
+   if(!password) return res.status(422).json({ success: false, message: 'the field password is required!'})
+
+   User.findOne({ phoneNumber: phoneNumber})
+   .then((result) => {
+      if(!result) return res.status(422).json({ success: false, message: 'Invalid phone number!'})
+      bcrypt.compare(password, result.password, (err, isMatch) => {
+         console.log('nah', err)
+         if(err) res.status(422).json({ success: false, message: 'Invalid password'})
+         if(isMatch) {
+            const token = jwt.sign({ _id: result._id}, JWT_SECRET)
+            const { _id, name, email, phoneNumber, photo} = result
+            res.status(200).json({ success: true, token: token, user: { _id, name, email, phoneNumber, photo}})
+         } else {
+            res.status(422).json({ success: false, message: 'Invalid password'})
+         }
+      })
+   }).catch((err) => {
+      return res.status(500).json({ success: false, message: 'server down!'})
+   });
+}
+
 module.exports = {
-   register
+   register,
+   login
 }

@@ -1,18 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Register.css'
 import { Formik, Field } from 'formik'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
+import axios from 'axios'
 import {
+   InputGroup,
    Input,
+   InputLeftAddon,
    Button,
    FormControl,
    FormLabel,
    FormErrorMessage,
    FormHelperText,
+   Alert,
+   AlertIcon,
+   AlertTitle,
+   AlertDescription,
+   CloseButton
    } from "@chakra-ui/core";
 
 function Register(props) {
+   const history = useHistory()
+   const [displayMessage, setDisplayMessage] = useState(false)
+   const [message, setMessage] = useState({})
    const initialValues = {
       name: '',
       email: '',
@@ -42,16 +53,41 @@ function Register(props) {
    })
 
    const onSubmit = (values, { setSubmitting }) => {         
-         console.log('click!')
-         setTimeout(() => {
-         alert(JSON.stringify(values, null, 2));
-         setSubmitting(false);
-         }, 400);
+      axios.post('/auth/register', values)
+         .then((result) => {
+            setSubmitting(false)
+            if(result.data.success){
+               setSubmitting(false);
+               setMessage({status : 'success', title:'Success Register!', message: result.data.message})
+               setDisplayMessage(true)
+               setTimeout(() => {
+                  history.push('/login')
+               },2000)
+            }
+         })
+         .catch((err) => {
+               setSubmitting(false)
+               setDisplayMessage(true)
+               setMessage({status : 'error', title:'Failed Register!', message: err.response.data.message})
+         })
    }
+
+   const handleMessage = ({status, title, message}) => (
+      <Alert status={status} position="absolute" width="100%">
+         <AlertIcon />
+         <AlertTitle mr={2}>{title}</AlertTitle>
+         <AlertDescription>{message}</AlertDescription>
+         <CloseButton position="absolute" right="8px" top="8px" onClick={() => setDisplayMessage(false)} />
+      </Alert>
+   )
    
 
    return (
       <div className="register">
+         {
+            displayMessage === true &&
+            handleMessage(message)
+         }
          <div className="register__header"></div>
          <div className="register__body">
             <div className="register__left">
@@ -99,11 +135,16 @@ function Register(props) {
                               {
                               ({ field, form }) => (
                                  <FormControl w="100%" isInvalid={form.errors.phoneNumber && form.touched.phoneNumber && form.errors.phoneNumber}>
-                                    <FormLabel fontSize='1em' htmlFor="phoneNumber" mb={1} mt={3}>Phone Number</FormLabel>
-                                    <Input
-                                       {...field}
-                                       id="phoneNumber" />
-                                    <FormErrorMessage mb={3}>{form.errors.phoneNumber}</FormErrorMessage>
+                                    <FormLabel fontSize='1em' htmlFor="phoneNumber">Phone Number</FormLabel>
+                                    <InputGroup>
+                                    <InputLeftAddon children="+62" />
+                                       <Input
+                                          type="tel" 
+                                          roundedLeft="0"
+                                          {...field}
+                                          id="phoneNumber" />
+                                    </InputGroup>
+                                    <FormErrorMessage>{form.errors.phoneNumber}</FormErrorMessage>
                                  </FormControl>
                               )}
                            </Field>
@@ -115,7 +156,8 @@ function Register(props) {
                                     <Input
                                        {...field}
                                        type="password"
-                                       id="password" />
+                                       id="password"
+                                       autoComplete="true" />
                                     <FormErrorMessage mb={3}>{form.errors.password}</FormErrorMessage>
                                  </FormControl>
                               )}
@@ -128,7 +170,8 @@ function Register(props) {
                                     <Input
                                        {...field}
                                        type="password"
-                                       id="passwordConfirmation" />
+                                       id="passwordConfirmation"
+                                       autoComplete="true" />
                                     <FormErrorMessage mb={3}>{form.errors.passwordConfirmation}</FormErrorMessage>
                                  </FormControl>
                               )}

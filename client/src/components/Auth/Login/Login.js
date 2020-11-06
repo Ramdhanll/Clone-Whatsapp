@@ -1,27 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Login.css'
+import axios from 'axios'
 import { Formik, Field } from 'formik'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
 import {
+   InputGroup,
    Input,
+   InputLeftAddon,
    Button,
    FormControl,
    FormLabel,
    FormErrorMessage,
-   FormHelperText,
+   Alert,
+   AlertIcon,
+   AlertTitle,
+   AlertDescription,
+   CloseButton,
    } from "@chakra-ui/core";
 
 function Login(props) {
+   const history = useHistory()
+   const [displayMessage, setDisplayMessage] = useState(false)
+   const [message, setMessage] = useState({})
+
    const initialValues = {
-      numberPhone: '',
+      phoneNumber: '',
       password: ''
    }
 
    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
    const validationSchema = Yup.object().shape({
-      numberPhone: Yup.string()
+      phoneNumber: Yup.string()
                   .matches(phoneRegExp, 'Phone number is not valid')
                   .required('Phone number is required'),
       password: Yup.string()
@@ -30,16 +41,32 @@ function Login(props) {
    })
 
    const onSubmit = (values, { setSubmitting }) => {         
-         console.log('click!')
-         setTimeout(() => {
-         alert(JSON.stringify(values, null, 2));
-         setSubmitting(false);
-         }, 400);
+         axios.post('/auth/login', values)
+         .then((result) => {
+            setSubmitting(false);
+            history.push('/')
+         }).catch((err) => {
+            setSubmitting(false);
+            setMessage({ status: 'error', title: 'Login Failed!', message: err.response.data.message})
+            setDisplayMessage(true)
+         });
    }
    
+   const handleMessage = ({status, title, message}) => (
+      <Alert status={status} position="absolute" width="100%">
+         <AlertIcon />
+         <AlertTitle mr={2}>{title}</AlertTitle>
+         <AlertDescription>{message}</AlertDescription>
+         <CloseButton position="absolute" right="8px" top="8px" onClick={() => setDisplayMessage(false)} />
+      </Alert>
+   )
 
    return (
       <div className="login">
+         {
+            displayMessage === true &&
+            handleMessage(message)
+         }
          <div className="login__header"></div>
          <div className="login__body">
             <div className="login__left">
@@ -59,15 +86,20 @@ function Login(props) {
                   {props => (
                      <div className="login__form">
                         <form onSubmit={props.handleSubmit}>
-                           <Field name="numberPhone">
+                           <Field name="phoneNumber">
                               {
                               ({ field, form }) => (
-                                 <FormControl w="100%" isInvalid={form.errors.numberPhone && form.touched.numberPhone && form.errors.numberPhone}>
-                                    <FormLabel fontSize='1em' htmlFor="numberPhone">Phone Number</FormLabel>
-                                    <Input
-                                       {...field}
-                                       id="numberPhone" />
-                                    <FormErrorMessage>{form.errors.numberPhone}</FormErrorMessage>
+                                 <FormControl w="100%" isInvalid={form.errors.phoneNumber && form.touched.phoneNumber && form.errors.phoneNumber}>
+                                    <FormLabel fontSize='1em' htmlFor="phoneNumber">Phone Number</FormLabel>
+                                    <InputGroup>
+                                    <InputLeftAddon children="+62" />
+                                       <Input
+                                          type="tel" 
+                                          roundedLeft="0"
+                                          {...field}
+                                          id="phoneNumber" />
+                                    </InputGroup>
+                                    <FormErrorMessage>{form.errors.phoneNumber}</FormErrorMessage>
                                  </FormControl>
                               )}
                            </Field>

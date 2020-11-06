@@ -4,6 +4,14 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ThemeProvider, CSSReset } from '@chakra-ui/core'
+import axios from 'axios'
+
+// untuk develepment
+if (process.env.NODE_ENV === 'development') {
+  axios.defaults.baseURL = 'http://localhost:9000/api/v1';
+} else {
+  axios.defaults.baseURL = process.env.APP_URI
+}
 
 ReactDOM.render(
   <React.StrictMode>
