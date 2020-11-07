@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import './Login.css'
-import axios from 'axios'
 import { Formik, Field } from 'formik'
 import { Link, useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
@@ -17,13 +16,19 @@ import {
    AlertTitle,
    AlertDescription,
    CloseButton,
-   } from "@chakra-ui/core";
+} from "@chakra-ui/core";
+
+// helpers
+import axios from '../../../helpers/axios'
+import {UserContext} from '../../../context/UserContext'
 
 function Login(props) {
    const history = useHistory()
+   const { state, dispatch } = useContext(UserContext)
    const [displayMessage, setDisplayMessage] = useState(false)
    const [message, setMessage] = useState({})
 
+   console.log('state', state)
    const initialValues = {
       phoneNumber: '',
       password: ''
@@ -43,6 +48,10 @@ function Login(props) {
    const onSubmit = (values, { setSubmitting }) => {         
          axios.post('/auth/login', values)
          .then((result) => {
+            console.log(result)
+            localStorage.setItem("token", result.data.token)
+            localStorage.setItem("user", JSON.stringify(result.data.user))
+            dispatch({type: "USER", payload:result.data.user})
             setSubmitting(false);
             history.push('/')
          }).catch((err) => {

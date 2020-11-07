@@ -8,6 +8,7 @@ import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import img from '../../images/jeni.jpg'
 import SidebarChat from './SidebarChat/SidebarChat';
 
+// helpers
 function Sidebar() {
    return (
       <div className="sidebar">
