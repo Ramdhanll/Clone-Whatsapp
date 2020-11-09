@@ -1,91 +1,41 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React from 'react'
 import './Chat.css';
-import axios from '../../helpers/axios'
-import { Avatar, IconButton } from '@material-ui/core'
-import { SearchOutlined, AttachFile, MoreVert, InsertEmoticon, Mic } from '@material-ui/icons'
+import { 
+   Avatar, 
+   Box, 
+   Icon,
+   IconButton,
+   InputGroup,
+   InputLeftElement,
+   PseudoBox,
+   Stack
+} from "@chakra-ui/core";
+import { BiDotsVerticalRounded } from 'react-icons/bi'
 
-function Chat({messages}) {
-   const [input, setInput] = useState("")
-   const chatBodyRef = useRef()
+import Sidebar from './Sidebar/Sidebar'
 
-   // scroll to bottom after get new message
-   useEffect(() => {
-      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight - (chatBodyRef.current.clientHeight + 50)
-   }, [messages])
-
-   const renderMessages = () => (
-      messages.map((message, index) => (
-         <p key={index} className={`chat__message ${message.received ? "chat__received" : null}`}>
-            <span className="chat__name">{message.name}</span>
-            {message.message}
-            <span className="chat__timestamp">
-               {message.timestamp}
-            </span>
-         </p>
-      ))
-   )
-
-   const sendMessage = (e) => {
-      e.preventDefault();
-      if(input.trim() === "") return
-
-      console.log(chatBodyRef)
-      axios.post('/message/new', {
-         message: input,
-         name: "hulk",
-         received: false,
-         timestamp: "2 August 2020"
-      })
-      .then(() => {
-         setInput("")
-      })
-   }
-
+function Chat() {
    return (
       <div className="chat">
-         <div className="chat__header">
-            <Avatar />
-
-            <div className="chat__headerInfo">
-               <h3>Room name</h3>
-               <p>last seen at...</p>
+         <Sidebar />
+         
+         <div className="chat__main">
+            <div className="chat__header">
+               <div className="chat__headerInfo">
+                  <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
+                  <h2>Ramadhani</h2>
+               </div>
+               <div className="chat__headerRight">
+                  <IconButton as={BiDotsVerticalRounded} 
+                     variant="ghost"
+                     isRound="true"
+                     size="xs" 
+                     color="#A0AEC0"
+                     _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
+                     _active={{ backgroundColor: '#283C45'}}
+                  />
+               </div>
             </div>
-
-            <div className="chat__headerRight">
-               <IconButton>
-                  <SearchOutlined />
-               </IconButton>
-               <IconButton>
-                  <AttachFile />
-               </IconButton>
-               <IconButton>
-                  <MoreVert />
-               </IconButton>
-            </div>
-         </div>
-
-         <div className="chat__body" ref={chatBodyRef}>
-            {
-               renderMessages()
-            }
-         </div>
-
-         <div className="chat__footer">
-            <InsertEmoticon />
-            <form>
-               <input 
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type a message"
-                  type="text"
-                  autoFocus
-               />
-               <button onClick={sendMessage}
-               type="submit">
-                     Send a message
-               </button>
-            </form>
-            <Mic />
          </div>
       </div>
    )

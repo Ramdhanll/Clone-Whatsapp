@@ -12,6 +12,7 @@ import { UserContext } from './context/UserContext'
 // components
 import Sidebar from './components/Sidebar/Sidebar';
 import Chat from './components/Chat/Chat';
+import Chats from './components/Chats/Chats';
 import Login from './components/Auth/Login/Login'
 import Register from './components/Auth/Register/Register'
 
@@ -49,7 +50,7 @@ function Routing() {
         <div className="chat__parent">
           <div className="chat__parent__body">
             <Sidebar/>
-            <Chat messages={messages} />
+            <Chats messages={messages} />
           </div>
         </div>
       </Route>
@@ -58,6 +59,9 @@ function Routing() {
       </Route>
       <Route exact path="/register">
           <Register/>
+      </Route>
+      <Route exact path="/chat">
+          <Chat/>
       </Route>
     </Switch>
   )
