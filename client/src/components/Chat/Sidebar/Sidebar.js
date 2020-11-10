@@ -2,17 +2,16 @@ import React from 'react'
 import './Sidebar.css'
 import { 
    Avatar, 
-   Box, 
+   Button, 
    Icon,
    IconButton,
-   InputGroup,
-   InputLeftElement,
-   PseudoBox,
-   Stack
+   MenuButton,
+   MenuItem,
+   MenuList,
+   Menu
 } from "@chakra-ui/core";
 import { BiDotsVerticalRounded  } from 'react-icons/bi'
 import { MdDonutLarge, MdChat } from 'react-icons/md'
-import { Input } from '@material-ui/core';
 
 import SidebarContact from './SidebarContact/SidebarContact'
 
@@ -43,14 +42,38 @@ function Sidebar() {
                   _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
                   _active={{ backgroundColor: '#283C45'}}
                />
-               <IconButton as={BiDotsVerticalRounded} 
-                  variant="ghost"
-                  isRound="true"
-                  size="xs" 
-                  color="#A0AEC0"
-                  _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
-                  _active={{ backgroundColor: '#283C45'}}
-               />
+               
+               <Menu>
+                  <MenuButton 
+                     colorScheme="pink"
+                     _focus={{ outline: '0'}}
+                  >
+                     <BiDotsVerticalRounded fontSize="26px" color="#A0AEC0" />
+                  </MenuButton>
+                  <MenuList 
+                     color="#A0AEC0" 
+                     marginRight="150px"
+                     marginTop="100px"
+                     width="6%"
+                     background="#2A2F32" 
+                     border="1px solid #2A2F35">
+                     <MenuItem
+                        _focus={{ backgroundColor: "#131C21" }}
+                     >
+                        Profile
+                     </MenuItem>
+                     <MenuItem
+                        _focus={{ backgroundColor: "#131C21" }}
+                     >
+                        Seting
+                     </MenuItem>
+                     <MenuItem
+                        _focus={{ backgroundColor: "#131C21" }}
+                     >
+                        Log out
+                     </MenuItem>
+                  </MenuList>
+               </Menu>
             </div>
          </div>
          
@@ -62,6 +85,12 @@ function Sidebar() {
          </div>
          
          <div className="sidebar__contact">
+            <SidebarContact />
+            <SidebarContact />
+            <SidebarContact />
+            <SidebarContact />
+            <SidebarContact />
+            <SidebarContact />
             <SidebarContact />
             <SidebarContact />
             <SidebarContact />

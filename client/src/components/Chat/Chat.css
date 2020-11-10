@@ -7,7 +7,6 @@
 .chat__main {
    display: flex;
    flex-direction: column;
-   background: blue;
    flex: 0.65;
    border-left: 1px solid rgb(94, 94, 94);
 
@@ -18,7 +17,7 @@
    background-color: #2A2F32;
    justify-content: space-between;
    padding: 20px;
-   color: #fff;
+   color: #dddddd;
 }
 
 .chat__headerInfo {
@@ -36,4 +35,85 @@
    align-items: center;
    justify-content: flex-end;
    flex: 0.09;
+}
+
+.chat__body {
+   background-image: url("https://fsa.zobj.net/crop.php?r=LkuguqVoY5_z-ttLFx4D4pUZ8Ae5VAW24O3IpdlMZyyQ_StIUOIJ1OwNc4EtiNqx7oNDHdHclmQKMs9o5lclbXGf5btwoxWBDScH2h6lxCrcDxTRn5lDeTLG7FO-aTjg0jVy9JAj0x8JqGHw");
+   flex: 1;
+   background-repeat: repeat;
+   background-position: center;
+   padding: 30px;
+   overflow: auto;
+   color: #dddddd;
+}
+
+.chat__message {
+   display: flex;
+   background-color: #262D31;
+   padding: 10px;
+   width: 70%;
+   justify-content: space-between;
+   border-radius: 15px;
+   gap: 10px;
+   margin-bottom: 5px;
+}
+
+.message {
+   color: #A0AEC0;
+}
+
+.chat__message .chat__timestamps {
+   justify-content: center;
+   align-self: flex-end;
+   font-weight: 300;
+   color: #b3b3b3af;
+   font-size: 0.8em;
+   justify-content: flex-end;
+}
+
+.chat__received {
+   margin-left: auto;
+   background-color: #054740;
+}
+
+.chat__footer {
+   display: flex;
+   height: 60px;
+   background-color: #1E2428;
+   text-align: center;
+   justify-content: space-evenly;
+}
+
+.chat__footer > form {
+   align-self: center;
+}
+
+.chat__footer > form > input {
+   border-radius: 30px;
+   width: 100%;
+   border: none;
+   outline-width: 0;
+   padding: 7px 12px;
+   background-color: #33383B;
+   color: #D2D2D4;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+   width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+   background: #131C21; 
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+   background: #394045; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+   background: #394045; 
 }
