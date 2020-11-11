@@ -2,13 +2,12 @@ import React from 'react'
 import './Chat.css';
 import { 
    Avatar, 
-   Box, 
-   Icon,
    IconButton,
-   InputGroup,
-   InputLeftElement,
-   PseudoBox,
-   Stack
+   MenuButton,
+   MenuItem,
+   MenuList,
+   Menu,
+   
 } from "@chakra-ui/core";
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { MdInsertEmoticon } from 'react-icons/md'
@@ -29,14 +28,30 @@ function Chat() {
                   <h2>Ramadhani</h2>
                </div>
                <div className="chat__headerRight">
-                  <IconButton as={BiDotsVerticalRounded} 
-                     variant="ghost"
-                     isRound="true"
-                     size="xs" 
-                     color="#A0AEC0"
-                     _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
-                     _active={{ backgroundColor: '#283C45'}}
-                  />
+               <Menu>
+                  <MenuButton 
+                     _focus={{ outline: '0'}}
+                  >
+                     <BiDotsVerticalRounded fontSize="26px" color="#A0AEC0" />
+                  </MenuButton>
+                  <MenuList 
+                     color="#A0AEC0" 
+                     minWidth="130px"
+                     marginRight="10px"
+                     background="#2A2F32" 
+                     border="1px solid #2A2F35">
+                     <MenuItem
+                        _focus={{ backgroundColor: "#131C21" }}
+                     >
+                        Contact info
+                     </MenuItem>
+                     <MenuItem
+                        _focus={{ backgroundColor: "#131C21" }}
+                     >
+                        Delete chat
+                     </MenuItem>
+                  </MenuList>
+               </Menu>
                </div>
             </div>
             <div className="chat__body">
