@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import './Sidebar.css'
 import { 
    Avatar, 
@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/core";
 import { BiDotsVerticalRounded  } from 'react-icons/bi'
 import { MdDonutLarge, MdChat } from 'react-icons/md'
+import axios from '../../../helpers/axios'
 
 import SidebarContact from './SidebarContact/SidebarContact'
 import SidebarContactOnChat from './SidebarContactOnChat/SidebarContactOnChat';
@@ -29,6 +30,59 @@ function Sidebar() {
    const { isOpen, onOpen, onClose } = useDisclosure();
    const [drawerAdd, setDrawerAdd] = useState(false)
    const [title, setTitle] = useState('')
+   const [placeHolder, setPlaceHolder] = useState("")
+   const [contactSearch, setContactSearch] = useState([])
+   const [valueSearch, setValueSearch] = useState("")
+   const timeoutRef = useRef(null)
+   const [loading, setLoading] = useState(false)
+
+   useEffect(() => {
+      if(valueSearch !== ""){
+         setLoading(true)
+      } else if (valueSearch === "") {
+         setLoading(false)
+      }
+      
+      /**
+       * 1. jika timeout.current ada maka jalankan clearTimeout
+       * 2. set timeoutref.current = setTimeOut()
+       * 3. setelah 5 detik timeoutref.current dibuat null lagi
+       * 5. jalankan setelah 500ms
+       * 6. set timeoutRef.current menjadi null kembali
+       */
+      if (timeoutRef.current !== null) {
+         clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(()=> {
+         timeoutRef.current = null;
+         if (valueSearch !== "") {
+            if(drawerAdd) {
+               fetchContactSearch(valueSearch)
+            } else {
+               console.log('new chat...', valueSearch)
+            }
+         } else {
+            setContactSearch([])
+         }
+      },500);
+      }, [valueSearch])
+
+   const fetchContactSearch = (query) => {
+      axios.post('/contact/search', {
+         query: query
+      }, {
+         headers : {
+            'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+         }
+      })
+      .then((result) => {
+         setContactSearch(result.data.contacts)
+         setLoading(false)
+      }).catch((err) => {
+         console.log(err)
+      });
+   }
 
    return (
       <div className="sidebar">
@@ -57,7 +111,9 @@ function Sidebar() {
                   _active={{ backgroundColor: '#283C45'}}
                   onClick={() => {
                      setDrawerAdd(false)
+                     setValueSearch("")
                      setTitle('New chat')
+                     setPlaceHolder("Search or start new chat")
                      onOpen() 
                   }}
                />
@@ -79,7 +135,10 @@ function Sidebar() {
                         _focus={{ backgroundColor: "#131C21" }}
                         onClick={() => {
                            setDrawerAdd(true)
+                           setValueSearch("")
+                           setContactSearch([])
                            setTitle('Add Contact')
+                           setPlaceHolder("Search a new friend")
                            onOpen()
                         }}
                      >
@@ -151,13 +210,22 @@ function Sidebar() {
                   <div className="sidebar__search" style={{ position: "fixed", marginBottom: "20px", zIndex:"999"}}>
                      <div className="sidebar__searchContainer">
                         <Icon name="search" color="#A0AEC0" />
-                        <input placeholder="Search contact" />
+                        <input placeholder={placeHolder} 
+                           value={valueSearch} 
+                           onChange={(e) => setValueSearch(e.target.value)} 
+                        />
                      </div>
                   </div>
 
                   <div className="sidebar__contact" style={{ marginTop: "50px"}}>
                      {
-                        drawerAdd ? (<SidebarContactSearch />) : (<SidebarContact />)
+                        drawerAdd ? (
+                           <SidebarContactSearch 
+                              contactSearch={contactSearch} 
+                              valueSearch={valueSearch} 
+                              loading={loading}
+                              />
+                        ) : (<SidebarContact />)
                      }
                      
                   </div>

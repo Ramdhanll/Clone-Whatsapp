@@ -10,7 +10,13 @@ const PORT = process.env.PORT || 9000
 
 // middleware
 app.use(express.json())
+app.use(express.urlencoded())
 app.use(cors())
+app.use(function (req, res, next) {
+   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+   res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
+   next()
+})
 
 // route
 app.get('/', (req, res) => {
@@ -18,6 +24,7 @@ app.get('/', (req, res) => {
 })
 app.use('/api/v1/message', require('./routes/message'))
 app.use('/api/v1/auth', require('./routes/auth'))
+app.use('/api/v1/contact', require('./routes/contact'))
 
 
 // DB Config

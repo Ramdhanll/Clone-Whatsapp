@@ -3,7 +3,8 @@ import './Register.css'
 import { Formik, Field } from 'formik'
 import { Link, useHistory } from 'react-router-dom'
 import * as Yup from 'yup'
-import axios from 'axios'
+import axios from '../../../helpers/axios'
+
 import {
    InputGroup,
    Input,
@@ -37,7 +38,7 @@ function Register(props) {
       name:Yup.string()
                .required('Name is required!')
                .test('alphabets', 'Name must only contain alphabets', (value) => {
-                  return /^[A-Za-z]+$/.test(value);
+                  return /^[a-zA-Z\s-, ]+$/.test(value);
                }),
       email: Yup.string()
                .email('Email is invalid!')
