@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './Sidebar.css'
 import { 
    Avatar, 
@@ -23,9 +23,13 @@ import { MdDonutLarge, MdChat } from 'react-icons/md'
 
 import SidebarContact from './SidebarContact/SidebarContact'
 import SidebarContactOnChat from './SidebarContactOnChat/SidebarContactOnChat';
+import SidebarContactSearch from './SidebarContactSearch/SidebarContactSearch';
 
 function Sidebar() {
    const { isOpen, onOpen, onClose } = useDisclosure();
+   const [drawerAdd, setDrawerAdd] = useState(false)
+   const [title, setTitle] = useState('')
+
    return (
       <div className="sidebar">
          <div className="sidebar__header">
@@ -51,57 +55,12 @@ function Sidebar() {
                   color="#A0AEC0"
                   _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
                   _active={{ backgroundColor: '#283C45'}}
-                  onClick={onOpen}
+                  onClick={() => {
+                     setDrawerAdd(false)
+                     setTitle('New chat')
+                     onOpen() 
+                  }}
                />
-               <Drawer 
-                  placement="left" 
-                  onClose={onClose} 
-                  isOpen={isOpen} 
-                  size="480px">
-                  <DrawerOverlay />
-                  <DrawerContent>
-                     <DrawerHeader 
-                        backgroundColor="#2A2F32"
-                        color="#fff"
-                        height="89px"
-                        display="flex"
-                        alignItems="center"
-                        borderBottomWidth="1px"
-                        borderBottomColor="#2A2F32"
-                     >
-                        New Chat
-                     </DrawerHeader>
-                     <DrawerBody
-                        backgroundColor="#131C21"
-                        color="#fff"
-                        margin="0"
-                        padding="0"
-                        overflow="auto"
-                     >
-                        <div className="sidebar__search" style={{ position: "fixed", marginBottom: "20px", zIndex:"999"}}>
-                           <div className="sidebar__searchContainer">
-                              <Icon name="search" color="#A0AEC0" />
-                              <input placeholder="Search contact" />
-                           </div>
-                        </div>
-
-                        <div className="sidebar__contact" style={{ marginTop: "50px"}}>
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           <SidebarContact />
-                           
-                        </div>
-                     </DrawerBody>
-                  </DrawerContent>
-               </Drawer>
-               
                <Menu>
                   <MenuButton 
                      colorScheme="pink"
@@ -116,6 +75,16 @@ function Sidebar() {
                      minWidth="140px"
                      background="#2A2F32" 
                      border="1px solid #2A2F35">
+                     <MenuItem
+                        _focus={{ backgroundColor: "#131C21" }}
+                        onClick={() => {
+                           setDrawerAdd(true)
+                           setTitle('Add Contact')
+                           onOpen()
+                        }}
+                     >
+                        Add Contact
+                     </MenuItem>
                      <MenuItem
                         _focus={{ backgroundColor: "#131C21" }}
                      >
@@ -153,6 +122,48 @@ function Sidebar() {
             <SidebarContactOnChat />
             <SidebarContactOnChat />
          </div>
+
+         <Drawer 
+            placement="left" 
+            onClose={onClose} 
+            isOpen={isOpen} 
+            size="480px">
+            <DrawerOverlay />
+            <DrawerContent>
+               <DrawerHeader 
+                  backgroundColor="#2A2F32"
+                  color="#fff"
+                  height="89px"
+                  display="flex"
+                  alignItems="center"
+                  borderBottomWidth="1px"
+                  borderBottomColor="#2A2F32"
+               >
+                  {title}
+               </DrawerHeader>
+               <DrawerBody
+                  backgroundColor="#131C21"
+                  color="#fff"
+                  margin="0"
+                  padding="0"
+                  overflow="auto"
+               >
+                  <div className="sidebar__search" style={{ position: "fixed", marginBottom: "20px", zIndex:"999"}}>
+                     <div className="sidebar__searchContainer">
+                        <Icon name="search" color="#A0AEC0" />
+                        <input placeholder="Search contact" />
+                     </div>
+                  </div>
+
+                  <div className="sidebar__contact" style={{ marginTop: "50px"}}>
+                     {
+                        drawerAdd ? (<SidebarContactSearch />) : (<SidebarContact />)
+                     }
+                     
+                  </div>
+               </DrawerBody>
+            </DrawerContent>
+         </Drawer>
       </div>
    )
 }

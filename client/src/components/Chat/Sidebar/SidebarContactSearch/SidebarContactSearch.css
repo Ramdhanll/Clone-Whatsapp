@@ -1,0 +1,31 @@
+.sidebarcontactsearch {
+   display: flex;
+   padding: 20px 20px;
+   border-bottom: 1px solid #2A2F32;
+   cursor: pointer;
+   box-sizing: border-box;
+   width: 100%;
+   align-items: center;
+}
+
+.sidebarcontactsearch p {
+   font-size: 12px;
+   color: #bbbbbb;
+}
+
+.sidebarcontactsearch__add {
+   margin-left: auto;
+}
+
+.sidebarcontactsearch:hover {
+   background: #2A2F32;
+   width: 100%;
+}
+
+.sidebarcontactsearch__info {
+   margin-left: 10px
+}
+
+.sidebarcontactsearch__info h2 {
+   font-weight: bold;
+}
