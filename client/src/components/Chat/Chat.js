@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect} from 'react'
 import './Chat.css';
 import { 
    Avatar, 
@@ -16,7 +16,13 @@ import { BsFillMicFill } from 'react-icons/bs'
 
 import Sidebar from './Sidebar/Sidebar'
 
+import { UserContext } from '../../context/UserContext'
+
 function Chat() {
+   const {state, dispatch} = useContext(UserContext)
+
+   
+
    return (
       <div className="chat">
          <Sidebar />

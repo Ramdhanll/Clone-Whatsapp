@@ -28,7 +28,6 @@ function Login(props) {
    const [displayMessage, setDisplayMessage] = useState(false)
    const [message, setMessage] = useState({})
 
-   console.log('state', state)
    const initialValues = {
       phoneNumber: '',
       password: ''
@@ -48,9 +47,9 @@ function Login(props) {
    const onSubmit = (values, { setSubmitting }) => {         
          axios.post('/auth/login', values)
          .then((result) => {
-            console.log(result)
             localStorage.setItem("token", result.data.token)
             localStorage.setItem("user", JSON.stringify(result.data.user))
+            localStorage.setItem("userId", result.data.user._id)
             dispatch({type: "USER", payload:result.data.user})
             setSubmitting(false);
             history.push('/')

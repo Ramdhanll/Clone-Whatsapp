@@ -1,4 +1,3 @@
-const { Timestamp } = require('mongodb')
 const mongoose = require('mongoose')
 const { ObjectId } = mongoose.Types
 
@@ -7,7 +6,7 @@ const ContactSavedSchema = mongoose.Schema({
       type: ObjectId,
       ref: "User"
    },
-   UserFrom: {
+   userFrom: {
       type: ObjectId,
       ref: "User"
    }

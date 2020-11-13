@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import './Sidebar.css'
 import { 
    Avatar, 
-   Button, 
    Icon,
    IconButton,
    MenuButton,
@@ -11,11 +10,9 @@ import {
    Menu,
    Drawer,
    DrawerBody,
-   DrawerFooter,
    DrawerHeader,
    DrawerOverlay,
    DrawerContent,
-   DrawerCloseButton,
    useDisclosure,
 } from "@chakra-ui/core";
 import { BiDotsVerticalRounded  } from 'react-icons/bi'
@@ -32,6 +29,7 @@ function Sidebar() {
    const [title, setTitle] = useState('')
    const [placeHolder, setPlaceHolder] = useState("")
    const [contactSearch, setContactSearch] = useState([])
+   const [contactSaved, setContactSaved] = useState([])
    const [valueSearch, setValueSearch] = useState("")
    const timeoutRef = useRef(null)
    const [loading, setLoading] = useState(false)
@@ -80,9 +78,29 @@ function Sidebar() {
          setContactSearch(result.data.contacts)
          setLoading(false)
       }).catch((err) => {
+         setLoading(false)
          console.log(err)
       });
    }
+
+   useEffect(() => {
+      setLoading(true)
+      axios.post('/contact/get', {
+         userFrom: localStorage.getItem("userId")
+      }, {
+         headers : {
+            'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+         }
+      })
+      .then((result) => {
+         setLoading(false)
+         setContactSaved(result.data.contacts)
+      }).catch((err) => {
+         setLoading(false)
+         console.log(err)
+      });
+      
+   }, [])
 
    return (
       <div className="sidebar">
@@ -171,7 +189,7 @@ function Sidebar() {
             </div>
          </div>
          
-         <div className="sidebar__contact">
+         <div className="sidebar__contact kobisa">
             <SidebarContactOnChat />
             <SidebarContactOnChat />
             <SidebarContactOnChat />
@@ -217,15 +235,19 @@ function Sidebar() {
                      </div>
                   </div>
 
-                  <div className="sidebar__contact" style={{ marginTop: "50px"}}>
+                  <div className="sidebar__contact" style={{ marginTop: "65px"}}>
                      {
                         drawerAdd ? (
                            <SidebarContactSearch 
+                              contacts={contactSaved}
                               contactSearch={contactSearch} 
                               valueSearch={valueSearch} 
                               loading={loading}
                               />
-                        ) : (<SidebarContact />)
+                        ) : (<SidebarContact
+                              loading={loading}
+                              contacts={contactSaved}
+                              />)
                      }
                      
                   </div>

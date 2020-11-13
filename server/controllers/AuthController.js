@@ -55,7 +55,6 @@ const login = (req, res) => {
    .then((result) => {
       if(!result) return res.status(422).json({ success: false, message: 'Invalid phone number!'})
       bcrypt.compare(password, result.password, (err, isMatch) => {
-         console.log('nah', err)
          if(err) res.status(422).json({ success: false, message: 'Invalid password'})
          if(isMatch) {
             const token = jwt.sign({ _id: result._id}, JWT_SECRET)

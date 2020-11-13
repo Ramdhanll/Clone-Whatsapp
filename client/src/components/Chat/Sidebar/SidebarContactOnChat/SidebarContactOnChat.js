@@ -2,7 +2,6 @@ import React from 'react'
 import './SidebarContactOnChat.css'
 import { 
    Avatar, 
-   AvatarBadge,
 
 
 } from "@chakra-ui/core";
