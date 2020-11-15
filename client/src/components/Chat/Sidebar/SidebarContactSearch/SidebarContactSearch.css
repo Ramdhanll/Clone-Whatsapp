@@ -17,6 +17,10 @@
    margin-left: auto;
 }
 
+.sidebarcontactsearch__exists {
+   margin-left: auto;
+}
+
 .sidebarcontactsearch:hover {
    background: #2A2F32;
    width: 100%;

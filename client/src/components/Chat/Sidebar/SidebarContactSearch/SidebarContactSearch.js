@@ -2,63 +2,77 @@ import React from 'react'
 import './SidebarContactSearch.css'
 import { 
    Avatar, 
+   Badge, 
    IconButton,
+   Spinner,
 
 
 } from "@chakra-ui/core";
 
 import { MdAdd} from 'react-icons/md'
-function SidebarContactSearch({contacts, contactSearch, valueSearch, loading}) {
-   const handleSavedContact = (id) => {
-      let variables = {
-         userTo: id,
-         userFrom: localStorage.getItem("userId")
-      }
+function SidebarContactSearch({contacts, contactSearch, valueSearch, loading, handleSavedContact}) {
 
-   }
-
-   const render = () => {
-      let a = contactSearch.filter((n, i) => {
-         for (let i = 0; i < contacts.length; i++) {
-            if(n._id === contacts[i].userTo._id) return false
-            if(n._id === localStorage.getItem("userId") ) return false
-         }
-         return n
-      })
-
-      if(!a.length) {
-         return (<h2 style={{ 
-            textAlign: "center",
-            paddingTop: "20px",
-            color:"red"
-         }}>
-               Data not found :(
-         </h2>)
-      } else {
-         return (
-            a.map((contact, index) => (
-               <div className="sidebarcontactsearch" key={index}>
-                  <Avatar name={contact.name} src={contact.photo} />
-                  <div className="sidebarcontactsearch__info">
-                     <h2> {contact.name} </h2>
-                     <p> {contact.phoneNumber}</p>
-                  </div>
-                  <div className="sidebarcontactsearch__add">
-                        <IconButton as={MdAdd} 
-                           variant="ghost"
-                           isRound="true"
-                           size="md" 
-                           color="#A0AEC0"
-                           _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
-                           _active={{ backgroundColor: '#032b26'}}
-                           onClick={() => handleSavedContact(contact._id)}
-                        />
-                  </div>
+   const renderContactCondition = (contact, contacts) => {
+      for (let i = 0; i < contacts.length; i++) {
+         if (contact._id === contacts[i].userTo._id) {
+            return (
+               <div className="sidebarcontactsearch__exists">
+                  <Badge variant="solid" bg="#276749">
+                     Ditambahkan
+                  </Badge>
                </div>
-         ))
-         )
+            ) 
+         } else if (contact._id === localStorage.getItem("userId")) {
+            return (
+               <div className="sidebarcontactsearch__exists">
+                  <Badge variant="solid" bg="#276749">
+                     You
+                  </Badge>
+               </div>
+            )
+         }
       }
+      return (
+         <div className="sidebarcontactsearch__add">
+               <IconButton as={MdAdd} 
+                  variant="ghost"
+                  isRound="true"
+                  size="md" 
+                  color="#A0AEC0"
+                  _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
+                  _active={{ backgroundColor: '#032b26'}}
+                  onClick={() => handleSavedContact(contact._id)}
+               />
+            </div>
+      )
    }
+
+   const renderContact = () => {
+      return (
+         contactSearch.map((contact, index) => (
+            <div className="sidebarcontactsearch" key={index}>
+               <Avatar name={contact.name} src={contact.photo} />
+               <div className="sidebarcontactsearch__info">
+                  <h2> {contact.name} </h2>
+                  <p> {contact.phoneNumber}</p>
+               </div>
+               {
+                  renderContactCondition(contact, contacts)
+               }
+            </div>
+      ))
+      )
+   }
+
+   const dataNotFound = () => (
+      <h2 style={{ 
+         textAlign: "center",
+         paddingTop: "20px",
+         color:"red"
+      }}>
+         Data not found :(
+      </h2>
+   )
 
    return (
       loading ? (
@@ -66,22 +80,17 @@ function SidebarContactSearch({contacts, contactSearch, valueSearch, loading}) {
             textAlign: "center",
             paddingTop: "20px",
          }}>
-               Loading....
+            <Spinner size="lg" />
          </h2>
+
       ) :
       contactSearch.length !== 0 ?
-      render()
+      renderContact()
       :
       <div className="SidebarContactSearch">
          {
             valueSearch ? (
-               <h2 style={{ 
-                  textAlign: "center",
-                  paddingTop: "20px",
-                  color:"red"
-                  }}>
-                     Data not found :(
-                  </h2>
+               dataNotFound()
             )
             :
             <h2 style={{ 

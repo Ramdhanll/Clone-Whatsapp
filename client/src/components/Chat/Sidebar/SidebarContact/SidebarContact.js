@@ -2,26 +2,57 @@ import React from 'react'
 import './SidebarContact.css'
 import { 
    Avatar, 
+   Spinner, 
 
 } from "@chakra-ui/core";
 
-function SidebarContact({contacts, loading}) {
+function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading}) {
 
-   const renderContacts = () => (
-      contacts.map((contact, index) => {
-         let user = contact.userTo
-         
+   const renderContacts = () => {
+
+      if (contactSavedFilter.length === 0 && valueSearch !== "") {
          return (
-            <div className="sidebarcontact" key={index}>
-            {console.log(user)}
-               <Avatar name={user.name} src={contact.userTo.photo} />
-               <div className="sidebarcontact__info">
-                  <h2> {user.name} </h2>
-               </div>
-            </div>
+            <h2 style={{ 
+               textAlign: "center",
+               paddingTop: "20px",
+               color:"red"
+            }}>
+               Contact not found :(
+            </h2>
          )
-      })
-   )
+      } else if (valueSearch === "") {
+         return (
+            contactSaved
+            .sort((a, b) => (a.userTo.name.toLowerCase() > b.userTo.name.toLowerCase()) ? 1 : ((b.userTo.name.toLowerCase() > a.userTo.name.toLowerCase()) ? -1 : 0))
+            .map((contact, index) => {
+               let user = contact.userTo
+               
+               return (
+                  <div className="sidebarcontact" key={index}>
+                     <Avatar name={user.name} src={contact.userTo.photo} />
+                     <div className="sidebarcontact__info">
+                        <h2> {user.name} </h2>
+                     </div>
+                  </div>
+               )
+            })
+         )
+      } else {
+         return (
+            contactSavedFilter.map((contact, index) => {
+               return (
+                  <div className="sidebarcontact" key={index}>
+                     <Avatar name={contact.userTo.name} src={contact.userTo.photo} />
+                     <div className="sidebarcontact__info">
+                        <h2> {contact.userTo.name} </h2>
+                     </div>
+                  </div>
+               )
+            })
+         )
+      }
+      
+   }
    return (
       loading ? 
          (
@@ -29,7 +60,7 @@ function SidebarContact({contacts, loading}) {
                textAlign: "center",
                paddingTop: "20px",
             }}>
-                  Loading....
+               <Spinner size="lg" />
             </h2>
          )
          :

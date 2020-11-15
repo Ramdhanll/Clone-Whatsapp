@@ -14,6 +14,7 @@ import {
    DrawerOverlay,
    DrawerContent,
    useDisclosure,
+   useToast,
 } from "@chakra-ui/core";
 import { BiDotsVerticalRounded  } from 'react-icons/bi'
 import { MdDonutLarge, MdChat } from 'react-icons/md'
@@ -29,10 +30,12 @@ function Sidebar() {
    const [title, setTitle] = useState('')
    const [placeHolder, setPlaceHolder] = useState("")
    const [contactSearch, setContactSearch] = useState([])
+   const [contactSavedFilter, setContactSavedFilter] = useState([])
    const [contactSaved, setContactSaved] = useState([])
    const [valueSearch, setValueSearch] = useState("")
    const timeoutRef = useRef(null)
    const [loading, setLoading] = useState(false)
+   const toast = useToast()
 
    useEffect(() => {
       if(valueSearch !== ""){
@@ -58,13 +61,13 @@ function Sidebar() {
             if(drawerAdd) {
                fetchContactSearch(valueSearch)
             } else {
-               console.log('new chat...', valueSearch)
+               filterContactSearch(valueSearch)
             }
          } else {
             setContactSearch([])
          }
       },500);
-      }, [valueSearch])
+   }, [valueSearch])
 
    const fetchContactSearch = (query) => {
       axios.post('/contact/search', {
@@ -83,6 +86,24 @@ function Sidebar() {
       });
    }
 
+   const filterContactSearch = (valueSearch) => {
+      setLoading(true)
+      let result;
+
+      result = contactSaved.filter((str) => {
+         let contact = str.userTo.name
+         contact.includes(valueSearch)
+         if(contact.toLowerCase().includes(valueSearch.toLowerCase())) {
+            return str
+         } else {
+            return false
+         }
+      })
+      setLoading(false)
+      return setContactSavedFilter(result)
+   }
+
+   // get contacts
    useEffect(() => {
       setLoading(true)
       axios.post('/contact/get', {
@@ -95,12 +116,43 @@ function Sidebar() {
       .then((result) => {
          setLoading(false)
          setContactSaved(result.data.contacts)
+         setContactSavedFilter(result.data.contacts)
       }).catch((err) => {
          setLoading(false)
          console.log(err)
       });
       
    }, [])
+
+   const handleSavedContact = (id) => {
+      setLoading(true)
+      let variables = {
+         userTo: id,
+         userFrom: localStorage.getItem("userId")
+      }
+
+      axios.post('/contact/saved', variables, {
+         headers : {
+            'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+         }
+      })
+      .then((result) => {
+         setLoading(false)
+         onClose()
+         toast({
+            title: "Contact saved.",
+            description: "immediately do greetings to new friends.",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+            position: "top-right"
+         })
+         setContactSaved([...contactSaved, result.data.result])
+         setValueSearch("")
+      }).catch((err) => {
+         alert('something wrong with server', err)
+      });
+   }
 
    return (
       <div className="sidebar">
@@ -189,7 +241,7 @@ function Sidebar() {
             </div>
          </div>
          
-         <div className="sidebar__contact kobisa">
+         <div className="sidebar__contact">
             <SidebarContactOnChat />
             <SidebarContactOnChat />
             <SidebarContactOnChat />
@@ -204,7 +256,8 @@ function Sidebar() {
             placement="left" 
             onClose={onClose} 
             isOpen={isOpen} 
-            size="480px">
+            size="480px"
+            >
             <DrawerOverlay />
             <DrawerContent>
                <DrawerHeader 
@@ -243,10 +296,13 @@ function Sidebar() {
                               contactSearch={contactSearch} 
                               valueSearch={valueSearch} 
                               loading={loading}
+                              handleSavedContact={handleSavedContact}
                               />
                         ) : (<SidebarContact
                               loading={loading}
-                              contacts={contactSaved}
+                              contactSaved={contactSaved}
+                              contactSavedFilter={contactSavedFilter}
+                              valueSearch={valueSearch} 
                               />)
                      }
                      
