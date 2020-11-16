@@ -18,7 +18,7 @@ const contactSaved = (req, res) => {
 
 const getContactSaved = (req, res) => {
    ContactSaved.find(req.body)
-   .select("_id userTo")
+   .select("_id userTo onChat")
    .populate("userTo", "_id photo name phoneNumber email")
    .exec((err, contacts) => {
       if(err) res.status(400).json({ success: false, err})
@@ -41,10 +41,35 @@ const searchContact = (req, res) => {
    });
 }
 
+const onChatTrue = (req, res)  => {
+   ContactSaved.findByIdAndUpdate(req.body, {
+      onChat: true
+   }, {
+      new: true
+   })
+   .select("_id userTo onChat")
+   .populate("userTo", "_id photo name phoneNumber email")
+   .exec((err, contacts) => {
+      if(err) res.status(400).json({ success: false, err})
+      res.status(200).json({ success: true, contacts})
+   })
+
+   /**
+    * , (err, contact) => {
+      if(err) res.status(500).json({ success: false, message: err})
+      let variable = {
+         _id: contact._id,
+         userTo: contact.userTo
+      }
+      res.status(200).json({success: true, contact: variable})
+   }
+    */
+}
 
 
 module.exports = {
    contactSaved,
    getContactSaved,
-   searchContact
+   searchContact,
+   onChatTrue
 }

@@ -7,13 +7,19 @@
    width: 100%;
 }
 
+.sidebarcontactonchat__deletechat {
+   margin-left: auto;
+   align-self: center;
+}
+
 .sidebarcontactonchat:hover {
-   background: #2A2F32;
+   background: #333a3d;
    width: 100%;
 }
-.sidebarcontactonchat:active {
+
+/* .sidebarcontactonchat:active {
    background: #3d454a;
-}
+} */
 
 .sidebarcontactonchat__info {
    margin-left: 10px

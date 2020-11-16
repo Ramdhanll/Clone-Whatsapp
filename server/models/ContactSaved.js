@@ -9,6 +9,10 @@ const ContactSavedSchema = mongoose.Schema({
    userFrom: {
       type: ObjectId,
       ref: "User"
+   },
+   onChat: {
+      type: Boolean,
+      default: false
    }
 }, { timestamps: true})
 

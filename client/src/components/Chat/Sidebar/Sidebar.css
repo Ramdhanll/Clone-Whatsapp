@@ -1,6 +1,6 @@
 .sidebar {
    background: #131C21;
-   flex: 0.35;
+   flex: 0.30;
    color: #dddddd;
    /* min-width: 300px; */
    border-right: 1px solid #2A2F32;
@@ -16,11 +16,11 @@
 
 .sidebar__headerRight {
    display: flex;
-   justify-content: space-around;
-   flex: 0.40;
+   justify-content: space-between;
    min-width: 120px;
    padding-left: 10px;
    align-items: center;
+   margin-left: auto;
 }
 
 .sidebar__search {
@@ -51,7 +51,18 @@
    display: flex;
    flex-direction: column;
    flex: 1;
-   overflow: auto;
    height: 77%;
 }
 
+.sidebar__contactonchat {
+   box-sizing: border-box;
+   display: flex;
+   flex-direction: column;
+   flex: 1;
+   height: 77%;
+   overflow: auto;
+}
+
+.active {
+   background-color: #2A2F32;
+}

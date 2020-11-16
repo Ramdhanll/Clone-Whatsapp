@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useContext } from 'react'
 import './Sidebar.css'
 import { 
    Avatar, 
@@ -24,6 +24,8 @@ import SidebarContact from './SidebarContact/SidebarContact'
 import SidebarContactOnChat from './SidebarContactOnChat/SidebarContactOnChat';
 import SidebarContactSearch from './SidebarContactSearch/SidebarContactSearch';
 
+import { ChatContext } from '../../../context/ChatContext'
+
 function Sidebar() {
    const { isOpen, onOpen, onClose } = useDisclosure();
    const [drawerAdd, setDrawerAdd] = useState(false)
@@ -34,8 +36,33 @@ function Sidebar() {
    const [contactSaved, setContactSaved] = useState([])
    const [valueSearch, setValueSearch] = useState("")
    const timeoutRef = useRef(null)
+   const contactOnChatRef = useRef(null)
    const [loading, setLoading] = useState(false)
    const toast = useToast()
+
+   const [activeIndex, setActiveIndex] = useState(null)
+   const {chatState, chatDispatch} = useContext(ChatContext)
+
+   // get contacts
+   useEffect(() => {
+      setLoading(true)
+      axios.post('/contact/get', {
+         userFrom: localStorage.getItem("userId")
+      }, {
+         headers : {
+            'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+         }
+      })
+      .then((result) => {
+         setLoading(false)
+         setContactSaved(result.data.contacts)
+         setContactSavedFilter(result.data.contacts)
+      }).catch((err) => {
+         setLoading(false)
+         console.log(err)
+      });
+      
+   }, [])
 
    useEffect(() => {
       if(valueSearch !== ""){
@@ -86,6 +113,7 @@ function Sidebar() {
       });
    }
 
+   // contactSearch
    const filterContactSearch = (valueSearch) => {
       setLoading(true)
       let result;
@@ -102,27 +130,6 @@ function Sidebar() {
       setLoading(false)
       return setContactSavedFilter(result)
    }
-
-   // get contacts
-   useEffect(() => {
-      setLoading(true)
-      axios.post('/contact/get', {
-         userFrom: localStorage.getItem("userId")
-      }, {
-         headers : {
-            'Authorization' : `Bearer ${localStorage.getItem("token")}`,
-         }
-      })
-      .then((result) => {
-         setLoading(false)
-         setContactSaved(result.data.contacts)
-         setContactSavedFilter(result.data.contacts)
-      }).catch((err) => {
-         setLoading(false)
-         console.log(err)
-      });
-      
-   }, [])
 
    const handleSavedContact = (id) => {
       setLoading(true)
@@ -152,6 +159,53 @@ function Sidebar() {
       }).catch((err) => {
          alert('something wrong with server', err)
       });
+   }
+
+   // Contact
+   const handleContactClick = (contact, index) => {      
+      contactSaved[index].onChat = true
+      onClose()
+      setActiveIndex(null)
+
+      // ubah db pada server
+      axios.put('/contact/onchat', {
+         _id: contact._id
+      }, {
+         headers :{
+            'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+         }
+      })
+      .then((result) => {
+      
+      }).catch((err) => {
+         console.log('handleContactClickErr', err)
+      });
+   }
+
+   // ContactOnChat
+   const renderContactOnChat = () => {
+      return (
+         contactSaved
+         .filter(contact => contact.onChat === true)
+         .map((contact, index) => {
+            return (
+               <SidebarContactOnChat 
+                  key={index}
+                  index={index} 
+                  contact={contact} 
+                  handleContactOnChatClick={handleContactOnChatClick}
+                  contactOnChatRef={contactOnChatRef}
+                  activeIndex={activeIndex}
+                  />
+            )
+         })
+      )
+   }
+
+   const handleContactOnChatClick = (index, contact) => {
+      setActiveIndex(index)
+      chatDispatch({type: "NEW_CHAT", payload: contact})
+      console.log(contact.userTo._id)
    }
 
    return (
@@ -241,22 +295,19 @@ function Sidebar() {
             </div>
          </div>
          
-         <div className="sidebar__contact">
-            <SidebarContactOnChat />
-            <SidebarContactOnChat />
-            <SidebarContactOnChat />
-            <SidebarContactOnChat />
-            <SidebarContactOnChat />
-            <SidebarContactOnChat />
-            <SidebarContactOnChat />
-            <SidebarContactOnChat />
+         <div className="sidebar__contactonchat">
+            {
+                  renderContactOnChat()
+            }
          </div>
 
          <Drawer 
             placement="left" 
             onClose={onClose} 
             isOpen={isOpen} 
-            size="480px"
+            size="410px"
+            isFullHeight="true"
+            blockScrollOnMount="true"
             >
             <DrawerOverlay />
             <DrawerContent>
@@ -303,6 +354,7 @@ function Sidebar() {
                               contactSaved={contactSaved}
                               contactSavedFilter={contactSavedFilter}
                               valueSearch={valueSearch} 
+                              handleContactClick={handleContactClick}
                               />)
                      }
                      

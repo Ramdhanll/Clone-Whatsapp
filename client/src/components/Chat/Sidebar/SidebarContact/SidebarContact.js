@@ -6,7 +6,7 @@ import {
 
 } from "@chakra-ui/core";
 
-function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading}) {
+function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading, handleContactClick}) {
 
    const renderContacts = () => {
 
@@ -28,7 +28,7 @@ function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading}
                let user = contact.userTo
                
                return (
-                  <div className="sidebarcontact" key={index}>
+                  <div className="sidebarcontact" key={index} onClick={() => handleContactClick(contact, index)}>
                      <Avatar name={user.name} src={contact.userTo.photo} />
                      <div className="sidebarcontact__info">
                         <h2> {user.name} </h2>

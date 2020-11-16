@@ -6,7 +6,9 @@ import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router
 
 // helpers
 import { reducer, initialState } from './reducers/userReducer'
+import { reducer as ChatReducer, initialState as ChatState} from './reducers/chatReducer'
 import { UserContext } from './context/UserContext'
+import { ChatContext } from './context/ChatContext'
 
 // components
 import Chat from './components/Chat/Chat';
@@ -17,6 +19,7 @@ import Register from './components/Auth/Register/Register'
 function Routing() {
   const { dispatch } = useContext(UserContext)
   const history = useHistory()
+  const [chatState, chatDispatch] = useReducer(ChatReducer, ChatState)
   // const [messages, setMessages] = useState([])
 
    // jalankan pertama, jika ada user lakukan reduce
@@ -59,7 +62,9 @@ function Routing() {
   return (
     <Switch>
       <Route exact path="/">
-        <Chat />
+        <ChatContext.Provider value={{ chatState, chatDispatch}}>
+          <Chat />
+        </ChatContext.Provider>
       </Route>
       <Route exact path="/login">
           <Login />
