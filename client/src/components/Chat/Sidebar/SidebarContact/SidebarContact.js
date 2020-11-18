@@ -28,7 +28,7 @@ function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading,
                let user = contact.userTo
                
                return (
-                  <div className="sidebarcontact" key={index} onClick={() => handleContactClick(contact, index)}>
+                  <div className="sidebarcontact" key={index} onClick={() => handleContactClick(contact)}>
                      <Avatar name={user.name} src={contact.userTo.photo} />
                      <div className="sidebarcontact__info">
                         <h2> {user.name} </h2>
@@ -41,7 +41,7 @@ function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading,
          return (
             contactSavedFilter.map((contact, index) => {
                return (
-                  <div className="sidebarcontact" key={index}>
+                  <div className="sidebarcontact" key={index} onClick={() => handleContactClick(contact)}>
                      <Avatar name={contact.userTo.name} src={contact.userTo.photo} />
                      <div className="sidebarcontact__info">
                         <h2> {contact.userTo.name} </h2>

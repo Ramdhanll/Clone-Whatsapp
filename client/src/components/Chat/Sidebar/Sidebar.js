@@ -162,8 +162,13 @@ function Sidebar() {
    }
 
    // Contact
-   const handleContactClick = (contact, index) => {      
-      contactSaved[index].onChat = true
+   const handleContactClick = (contact) => {      
+      let contactUpdated = contactSaved.findIndex(contactd => {
+         return contactd._id === contact._id
+      })
+      contactSaved[contactUpdated].onChat = true
+      setContactSaved([...contactSaved])
+      chatDispatch({type: "NEW_CHAT", payload: contact})
       onClose()
       setActiveIndex(null)
 
@@ -183,30 +188,38 @@ function Sidebar() {
    }
 
    // ContactOnChat
-   const renderContactOnChat = () => {
-      return (
-         contactSaved
-         .filter(contact => contact.onChat === true)
-         .map((contact, index) => {
-            return (
-               <SidebarContactOnChat 
-                  key={index}
-                  index={index} 
-                  contact={contact} 
-                  handleContactOnChatClick={handleContactOnChatClick}
-                  contactOnChatRef={contactOnChatRef}
-                  activeIndex={activeIndex}
-                  />
-            )
-         })
-      )
-   }
-
    const handleContactOnChatClick = (index, contact) => {
       setActiveIndex(index)
       chatDispatch({type: "NEW_CHAT", payload: contact})
-      console.log(contact.userTo._id)
    }
+
+   const handleContactOnChatDelete = (e, contact) => {
+      let contactUpdated = contactSaved.findIndex(contactd => {
+         return contactd._id === contact._id
+      })
+
+      contactSaved[contactUpdated].onChat = false
+      setContactSaved([...contactSaved])
+
+
+      // ubah db pada server
+      axios.put('/contact/delete', {
+         _id: contact._id
+      }, {
+         headers :{
+            'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+         }
+      })
+      .then((result) => {
+      
+      }).catch((err) => {
+         console.log('handleContactClickErr', err)
+      });
+   }
+
+   useEffect(() => {
+      console.log('updated')
+   }, [contactSaved])
 
    return (
       <div className="sidebar">
@@ -297,7 +310,21 @@ function Sidebar() {
          
          <div className="sidebar__contactonchat">
             {
-                  renderContactOnChat()
+               contactSaved
+                  .filter(contact => contact.onChat === true)
+                  .map((contact, index) => {
+                     return (
+                        <SidebarContactOnChat 
+                           key={index}
+                           index={index} 
+                           contact={contact} 
+                           handleContactOnChatClick={handleContactOnChatClick}
+                           handleContactOnChatDelete={handleContactOnChatDelete}
+                           contactOnChatRef={contactOnChatRef}
+                           activeIndex={activeIndex}
+                           />
+                     )
+                  })
             }
          </div>
 

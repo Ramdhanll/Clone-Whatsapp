@@ -6,10 +6,11 @@ import {
 
 } from "@chakra-ui/core";
 import { RiArrowDropDownLine } from 'react-icons/ri';
-function SidebarContactOnChat({contact, index, handleContactOnChatClick, contactOnChatRef, activeIndex}) {
+function SidebarContactOnChat({contact, index, handleContactOnChatClick, handleContactOnChatDelete, activeIndex}) {
    
    return (
-      <div className={`sidebarcontactonchat } ${index === activeIndex ? 'active': null} `} 
+      <div className={`sidebarcontactonchat ${index === activeIndex ? 'active': null} `}>
+         <div className={`sidebarcontactonchat__left`} 
             key={index} 
             onClick={() => handleContactOnChatClick(index, contact)} 
             >
@@ -18,22 +19,33 @@ function SidebarContactOnChat({contact, index, handleContactOnChatClick, contact
             <h2> {contact.userTo.name} </h2>
             <p>Last message....</p>
          </div>
+      </div>
 
-         <div className="sidebarcontactonchat__deletechat">
-            <Menu>
-               <MenuButton 
-                  _focus={{ outline: '0'}}
-               >
-                  <RiArrowDropDownLine fontSize="35px" color="#A0AEC0" />
-               </MenuButton>
+         <div className={`sidebarcontactonchat__deletechat ${index === activeIndex ? 'active': null} `}>
+            <Menu
+               placement="right-start"
+            >
+               <div className="btnarrow">
+                  <MenuButton 
+                     _focus={{ 
+                        outline: '0',
+                     }}
+                  >
+                     <RiArrowDropDownLine 
+                        fontSize="35px" 
+                        color="#A0AEC0"  />
+                  </MenuButton>
+               </div>
                <MenuList 
                   color="#A0AEC0" 
                   minWidth="130px"
                   marginRight="10px"
                   background="#2A2F32" 
+                  height="100px"
                   border="1px solid #2A2F35">
                   <MenuItem
                      _focus={{ backgroundColor: "#131C21" }}
+                     onClick={(e) => handleContactOnChatDelete(e, contact)}
                   >
                      Delete Chat
                   </MenuItem>

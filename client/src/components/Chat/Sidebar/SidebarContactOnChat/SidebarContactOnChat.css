@@ -1,15 +1,62 @@
 .sidebarcontactonchat {
    display: flex;
-   padding: 20px 20px;
    border-bottom: 1px solid #2A2F32;
    cursor: pointer;
    box-sizing: border-box;
    width: 100%;
 }
 
+.sidebarcontactonchat__left {
+   display: flex;
+   align-items: center;
+   padding: 12px 12px;
+   cursor: pointer;
+   box-sizing: border-box;
+   width: 100%;
+}
+
 .sidebarcontactonchat__deletechat {
-   margin-left: auto;
    align-self: center;
+   display: flex;
+   height: 100%;
+}
+
+.btnarrow {
+   display: flex;
+   align-items: center;
+   opacity: 0;
+   height: 100%;
+   padding: auto;
+}
+
+
+.sidebarcontactonchat:hover .btnarrow {
+   opacity: 1;
+   animation-name: example;
+   animation-duration: 0.8s;
+}
+
+.sidebarcontactonchat:hover .sidebarcontactonchat__deletechat {
+   background: #333a3d;
+}
+
+.btnarrow:focus {
+   opacity: 1;
+}
+
+@keyframes example {
+   from {opacity: 0;}
+   to {opacity: 1;}
+}
+
+.sidebarcontactonchat:visited .sidebarcontactonchat__deletechat{
+   opacity: 1;
+}
+.sidebarcontactonchat:active .sidebarcontactonchat__deletechat{
+   opacity: 1;
+}
+.sidebarcontactonchat:focus .sidebarcontactonchat__deletechat{
+   opacity: 1;
 }
 
 .sidebarcontactonchat:hover {
@@ -17,14 +64,14 @@
    width: 100%;
 }
 
-/* .sidebarcontactonchat:active {
-   background: #3d454a;
-} */
-
 .sidebarcontactonchat__info {
    margin-left: 10px
 }
 
 .sidebarcontactonchat__info h2 {
    font-weight: bold;
+}
+
+.active {
+   background-color: #2A2F32;
 }

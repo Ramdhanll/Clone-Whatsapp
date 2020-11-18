@@ -1,4 +1,4 @@
-import React, { useContext, useEffect} from 'react'
+import React, { useContext, useEffect, useRef} from 'react'
 import './Chat.css';
 import { 
    Avatar, 
@@ -23,6 +23,14 @@ import { ChatContext } from '../../context/ChatContext'
 function Chat() {
    // const {state, dispatch} = useContext(UserContext)
    const { chatState, chatDispatch } = useContext(ChatContext)
+   const inputRef = useRef(null)
+
+   useEffect(() => {
+      if(inputRef.current) {
+         inputRef.current.focus()
+         inputRef.current.value = ""
+      }
+   })
 
    return (
       <div className="chat">
@@ -136,7 +144,8 @@ function Chat() {
                               <input 
                                  placeholder="Type a message"
                                  type="text"
-                                 autoFocus
+                                 autoFocus={true}
+                                 ref={inputRef}
                               />
                            </form>
                            <IconButton as={BsFillMicFill}
