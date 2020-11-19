@@ -190,7 +190,8 @@ function Sidebar() {
    // ContactOnChat
    const handleContactOnChatClick = (index, contact) => {
       setActiveIndex(index)
-      chatDispatch({type: "NEW_CHAT", payload: contact})
+      chatDispatch({type: "CLEAR"})
+      chatDispatch({type: "NEW_CHAT", payload: contact}) 
    }
 
    const handleContactOnChatDelete = (e, contact) => {

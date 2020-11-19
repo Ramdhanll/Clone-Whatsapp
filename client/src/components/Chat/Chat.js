@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef} from 'react'
+import React, { useContext, useEffect, useRef, useState} from 'react'
 import './Chat.css';
 import { 
    Avatar, 
@@ -13,6 +13,8 @@ import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { MdInsertEmoticon } from 'react-icons/md'
 import { ImAttachment } from 'react-icons/im'
 import { BsFillMicFill } from 'react-icons/bs'
+import axios from '../../helpers/axios'
+import moment from 'moment'
 
 import photo from './images/landing.png'
 
@@ -24,6 +26,7 @@ function Chat() {
    // const {state, dispatch} = useContext(UserContext)
    const { chatState, chatDispatch } = useContext(ChatContext)
    const inputRef = useRef(null)
+   const [messages, setMessages] = useState([])
 
    useEffect(() => {
       if(inputRef.current) {
@@ -31,6 +34,28 @@ function Chat() {
          inputRef.current.value = ""
       }
    })
+
+   useEffect(() => {
+      axios.post('/message/sync', {
+         from: localStorage.getItem('userId'),
+         to: chatState ? chatState.userTo._id : null
+      }, {
+         headers : {
+            'Authorization': localStorage.getItem("token")
+         }
+      })
+      .then((result) => {
+         console.log(result)
+         setMessages(result.data.messages)
+      }).catch((err) => {
+         console.log('err', err)
+         alert('sync failed!')
+      });
+
+      return () => {
+         setMessages([])
+      }
+   }, [chatState])
 
    return (
       <div className="chat">
@@ -82,44 +107,20 @@ function Chat() {
                         </div>
                      </div>
                      <div className="chat__body">
-                        <div className="chat__message">
-                           <p className="message">
-                              Lagi apa ni.... ?s adsdasdas
-                              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla esse laborum quam delectus eius, commodi perferendis aliquid dolor, nesciunt libero, aut mollitia vitae quos omnis quod at. Asperiores, ullam ratione.
-                           </p>
-                           <p className="chat__timestamps">
-                              23:00
-                           </p>
-                        </div>
-
-                        <div className="chat__message chat__received">
-                           <p className="message">
-                              Lagi apa ni.... ?s adsdasdas
-                              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla esse laborum quam delectus eius, commodi perferendis aliquid dolor, nesciunt libero, aut mollitia vitae quos omnis quod at. Asperiores, ullam ratione.
-                           </p>
-                           <p className="chat__timestamps">
-                              23:00
-                           </p>
-                        </div>
-                        <div className="chat__message chat__received">
-                           <p className="message">
-                              Lagi apa ni.... ?s adsdasdas
-                              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla esse laborum quam delectus eius, commodi perferendis aliquid dolor, nesciunt libero, aut mollitia vitae quos omnis quod at. Asperiores, ullam ratione.
-                           </p>
-                           <p className="chat__timestamps">
-                              23:00
-                           </p>
-                        </div>
-                        <div className="chat__message chat__received">
-                           <p className="message">
-                              Lagi apa ni.... ?s adsdasdas
-                              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nulla esse laborum quam delectus eius, commodi perferendis aliquid dolor, nesciunt libero, aut mollitia vitae quos omnis quod at. Asperiores, ullam ratione.
-                           </p>
-                           <p className="chat__timestamps">
-                              23:00
-                           </p>
-                        </div>
-
+                        {
+                           messages.map((message, index) => {
+                              return (
+                                 <div className={`chat__message ${message.from !== localStorage.getItem("userId") ? 'chat__received' : null}`} key={index}>
+                                    <p className="message">
+                                       { message.text }
+                                    </p>
+                                    <p className="chat__timestamps">
+                                       { moment(message.createdAt).format('llll')}
+                                    </p>
+                                 </div>
+                              )
+                           })
+                        }
                      </div>
                      <div className="chat__footer">
                            <IconButton as={MdInsertEmoticon}
