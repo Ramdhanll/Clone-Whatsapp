@@ -20,9 +20,9 @@ const syncc = (req, res) => {
 // --------------------------------------------------------------------------------------------
 const send = (req, res) => {
    const messages = new Messages(req.body)
-   messages.save((err, result) => {
+   messages.save((err, message) => {
       if(err) return res.status(400).json({ success: false, err})
-      res.status(200).json({ success: true, result})
+      res.status(200).json({ success: true, message})
    })
 }
 

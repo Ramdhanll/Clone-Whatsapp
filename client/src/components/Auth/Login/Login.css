@@ -74,3 +74,17 @@ form {
    color: blue;
    text-decoration: underline;
 }
+
+/* Responsive */
+/* Extra small devices (phones, 768px and down) */
+@media only screen and (max-width: 768px) {
+   .login_body {
+      flex-direction: column;
+   }
+   .login__left {
+      display: none;
+   }
+   .login__right {
+      flex: 1;
+   }
+}

@@ -25,6 +25,7 @@ import SidebarContactOnChat from './SidebarContactOnChat/SidebarContactOnChat';
 import SidebarContactSearch from './SidebarContactSearch/SidebarContactSearch';
 
 import { ChatContext } from '../../../context/ChatContext'
+import { SelectProfileContext } from '../../../context/SelectProfileContext';
 
 function Sidebar() {
    const { isOpen, onOpen, onClose } = useDisclosure();
@@ -42,6 +43,8 @@ function Sidebar() {
 
    const [activeIndex, setActiveIndex] = useState(null)
    const {chatState, chatDispatch} = useContext(ChatContext)
+
+   const { selectProfileDispatch } = useContext(SelectProfileContext)
 
    // get contacts
    useEffect(() => {
@@ -190,8 +193,9 @@ function Sidebar() {
    // ContactOnChat
    const handleContactOnChatClick = (index, contact) => {
       setActiveIndex(index)
-      chatDispatch({type: "CLEAR"})
-      chatDispatch({type: "NEW_CHAT", payload: contact}) 
+      selectProfileDispatch({type: "SELECT_PROFILE", payload: contact.userTo._id}) 
+      chatDispatch({type: "PROFILE", payload: contact}) 
+      console.log('sidebar', chatState)
    }
 
    const handleContactOnChatDelete = (e, contact) => {
@@ -217,10 +221,6 @@ function Sidebar() {
          console.log('handleContactClickErr', err)
       });
    }
-
-   useEffect(() => {
-      console.log('updated')
-   }, [contactSaved])
 
    return (
       <div className="sidebar">

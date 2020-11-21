@@ -7,8 +7,10 @@ import { BrowserRouter as Router, Route, Switch, useHistory } from 'react-router
 // helpers
 import { reducer, initialState } from './reducers/userReducer'
 import { reducer as ChatReducer, initialState as ChatState} from './reducers/chatReducer'
+import { reducer as SelectProfileReducer, initialState as SelectProfileState} from './reducers/selectProfile'
 import { UserContext } from './context/UserContext'
 import { ChatContext } from './context/ChatContext'
+import { SelectProfileContext } from './context/SelectProfileContext'
 
 // components
 import Chat from './components/Chat/Chat';
@@ -20,6 +22,7 @@ function Routing() {
   const { dispatch } = useContext(UserContext)
   const history = useHistory()
   const [chatState, chatDispatch] = useReducer(ChatReducer, ChatState)
+  const [selectProfileState, selectProfileDispatch] = useReducer(SelectProfileReducer, SelectProfileState)
   // const [messages, setMessages] = useState([])
 
    // jalankan pertama, jika ada user lakukan reduce
@@ -62,9 +65,11 @@ function Routing() {
   return (
     <Switch>
       <Route exact path="/">
-        <ChatContext.Provider value={{ chatState, chatDispatch}}>
-          <Chat />
-        </ChatContext.Provider>
+        <SelectProfileContext.Provider value={{ selectProfileState, selectProfileDispatch}}>
+          <ChatContext.Provider value={{ chatState, chatDispatch}}>
+              <Chat />
+          </ChatContext.Provider>
+        </SelectProfileContext.Provider>
       </Route>
       <Route exact path="/login">
           <Login />
@@ -82,11 +87,11 @@ function App() {
 
   return (
     <div className="app">
-      <UserContext.Provider value={{state, dispatch}}>
-        <Router>
-          <Routing/>
-        </Router>
-      </UserContext.Provider>
+        <UserContext.Provider value={{state, dispatch}}>
+          <Router>
+            <Routing/>
+          </Router>
+        </UserContext.Provider>
     </div>
   );
   // return (

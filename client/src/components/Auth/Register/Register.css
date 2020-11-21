@@ -76,3 +76,18 @@ form {
    color: blue;
    text-decoration: underline;
 }
+
+/* Responsive */
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 768px) {
+   .register_body {
+      flex-direction: column;
+   }
+   .register__left {
+      display: none;
+   }
+   .register__right {
+      flex: 1;
+   }
+}
