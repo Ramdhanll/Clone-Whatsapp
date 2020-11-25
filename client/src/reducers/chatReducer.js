@@ -2,37 +2,40 @@ export const initialState = []
 
 export const reducer = (state, action) => {
    let i = state.findIndex(item => item.profile.userTo._id === action.id)
-   const duplicated = () => {
-      for (let i = 0; i < state.length; i++) {
-         // check if null
-         if(!state[i+1]) return
-         if(state[i].profile._id === state[i+1].profile._id) {
-            state.splice(i, 1)
-            return
-         }
+   // const duplicated = () => {
+   //    for (let i = 0; i < state.length; i++) {
+   //       // check if null
+   //       if(!state[i+1]) return
+   //       if(state[i].profile._id === state[i+1].profile._id) {
+   //          state.splice(i, 1)
+   //          return
+   //       }
 
-         for (let j = 0; j < state.length; j++) {
-            if(!state[j]) return // if null return
-            if(i === j) continue // if i equals j skip
-            if(state[i].profile._id === state[j].profile._id) {
-               state.splice(j, 1)
-            }
-         }
-      }
-   }
+   //       for (let j = 0; j < state.length; j++) {
+   //          if(!state[j]) return // if null return
+   //          if(i === j) continue // if i equals j skip
+   //          if(state[i].profile._id === state[j].profile._id) {
+   //             state.splice(j, 1)
+   //          }
+   //       }
+   //    }
+   // }
 
    switch (action.type) {
       case "PROFILE":
-         state.push({
-            profile: action.payload,
-            chat: []
-         })
-         duplicated()
+         console.log('profile run', i)
+         if(i === -1){
+            state.push({
+               profile: action.payload,
+               chat: []
+            })
+         }
          return [
             ...state
          ]
       case "NEW_CHAT":
          if(i !== -1){
+            console.log('newchat run', action.id)
             state[i].chat.push(...action.payload)
          }
          return [
@@ -40,6 +43,7 @@ export const reducer = (state, action) => {
          ]
       case "UPDATE_CHAT":
          if(i !== -1){
+            console.log('updatechat run')
             state[i].chat.push(action.payload)
          }
          return [

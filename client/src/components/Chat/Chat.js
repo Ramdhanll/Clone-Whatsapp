@@ -33,8 +33,7 @@ function Chat() {
    const [message, setMessage] = useState("")
    const [loading, setLoading] = useState(false)
    const [profile, setProfile] = useState(null)
-   // index messages at state context
-   const [indexContext, setIndexContext] = useState(null)
+   const [indexAlreadyClicked, setindexAlreadyClicked] = useState([])
 
    useEffect(() => {
       // INPUT FOCUS
@@ -44,12 +43,18 @@ function Chat() {
       }
 
       // SET PROFILE
-      let newProfile = chatState.filter(item => item.profile.userTo._id === selectProfileState)
-      setProfile(newProfile[0])
+      let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
+      
+
+      setProfile(chatState[indexChatState])
+      console.log('index', indexChatState)
+      
+      
       // SYNC MESSAGE
       setLoading(true)
-      if(newProfile[0]) {
-         if (newProfile[0].chat.length === 0) {
+      if(chatState[indexChatState]) {
+         if (!indexAlreadyClicked.includes(indexChatState)) {
+            setindexAlreadyClicked([...indexAlreadyClicked, indexChatState])
             axios.post('/message/sync', {
                from: localStorage.getItem('userId'),
                to: selectProfileState
@@ -59,6 +64,7 @@ function Chat() {
                }
             })
             .then( (result) => {
+               console.log('runn')
                chatDispatch({type: "NEW_CHAT", payload: result.data.messages, id: selectProfileState})
                setLoading(false)
                if(
@@ -67,124 +73,26 @@ function Chat() {
                ) {
                   setMessages(result.data.messages)
                }
-
             }).catch((err) => {
                setLoading(false)
                console.log('err', err.response)
             });
          } else {
-            setMessages(newProfile[0].chat)
+            console.log('runn false')
+            setMessages(chatState[indexChatState].chat)
             setLoading(false)
          }
-      }
-      
 
+         
+         
+      }
+      console.log('chatState', chatState)
 
       return () => {
          setMessages([])
       }
 
    }, [selectProfileState])
-
-
-   const checkMessages = () => {
-
-      let result = {
-         index: null,
-         exist: false
-      }
-      for (let i = 0; i < chatState.chat.length; i++) {
-         if(chatState.chat[i]){
-            for (let j = 0; j < chatState.chat[i].length; j++) {
-               if(
-                  chatState.chat[i][j].from === localStorage.getItem('userId') && chatState.chat[i][j].to === chatState.profile.userTo._id ||
-                  chatState.chat[i][j].from === chatState.profile.userTo._id && chatState.chat[i][j].to === localStorage.getItem('userId')
-                  ) {
-                     result.index = i
-                     result.exist = true
-                     break
-                  }
-            }
-         }
-         if(result.exist === true){
-            break
-         }
-      }
-         
-      setIndexContext(result.index)
-      return result
-   }
-
-   // SYNC MESSAGE
-   // useEffect(() => {
-   //    setLoading(true)
-      
-   //    // console.log('profile', profile)
-   //    // if(profile.profile.chat.length < 0)
-   //    axios.post('/message/sync', {
-   //       from: localStorage.getItem('userId'),
-   //       to: selectProfileState
-   //    }, {
-   //       headers : {
-   //          'Authorization': localStorage.getItem("token")
-   //       }
-   //    })
-   //    .then( (result) => {
-   //       setMessages(result.data.messages)
-   //       chatDispatch({type: "NEW_CHAT", payload: result.data.messages, id: selectProfileState})
-   //       setLoading(false)
-   //    }).catch((err) => {
-   //       setLoading(false)
-   //       console.log('err', err.response)
-   //    });
-
-
-   //    return () => {
-   //       setMessages([])
-   //    }
-   // }, [selectProfileState])
-
-   // useEffect(() => {
-      // setLoading(true)
-      // const result = checkMessages()
-      
-      // if(result.exist === true) {
-      //    setLoading(false)
-      //    setMessages(chatState.chat[result.index])
-      // } else {
-      //    axios.post('/message/sync', {
-      //       from: localStorage.getItem('userId'),
-      //       to: !_.isEmpty(chatState.profile) ? chatState.profile.userTo._id : null
-      //    }, {
-      //       headers : {
-      //          'Authorization': localStorage.getItem("token")
-      //       }
-      //    })
-      //    .then( (result) => {
-      //       if(result.data.messages.length !== 0){
-      //          console.log('dispatch NEW_CHAT')
-      //          chatDispatch({type: "NEW_CHAT", payload: result.data.messages})
-      //          if(
-      //             result.data.messages[0].from === localStorage.getItem('userId') && result.data.messages[0].to === chatState.profile.userTo._id ||
-      //             result.data.messages[0].from === chatState.profile.userTo._id && result.data.messages[0].to === localStorage.getItem('userId')
-      //          ) {
-      //             setMessages(result.data.messages)
-      //          }
-      //       }
-
-            
-      //       setLoading(false)
-      //    }).catch((err) => {
-      //       setLoading(false)
-      //       console.log('err', err.response)
-      //    });
-         
-      //    console.log('STATE', chatState)
-      //    return () => {
-      //       setMessages([])
-      //    }
-      // }
-   // }, [chatState.profile])
 
    const sendMessage = () => {
       if(message.trim() === "") return
@@ -202,13 +110,6 @@ function Chat() {
          setMessages([...messages, result.data.message])
          chatDispatch({type: "UPDATE_CHAT", payload: result.data.message, id: selectProfileState})
          setMessage("")
-
-         // if(resultCheckMessage.index === null) {
-         //    chatDispatch({type: "NEW_CHAT", payload: messages})
-         // } else {
-         //    chatDispatch({type: "UPDATE_CHAT", payload: result.data.message, index: resultCheckMessage.index})
-         // }
-
       })
    }
 

@@ -43,7 +43,6 @@ function Sidebar() {
 
    const [activeIndex, setActiveIndex] = useState(null)
    const {chatState, chatDispatch} = useContext(ChatContext)
-
    const { selectProfileDispatch } = useContext(SelectProfileContext)
 
    // get contacts
@@ -194,8 +193,7 @@ function Sidebar() {
    const handleContactOnChatClick = (index, contact) => {
       setActiveIndex(index)
       selectProfileDispatch({type: "SELECT_PROFILE", payload: contact.userTo._id}) 
-      chatDispatch({type: "PROFILE", payload: contact}) 
-      console.log('sidebar', chatState)
+      chatDispatch({type: "PROFILE", payload: contact, id: contact.userTo._id}) 
    }
 
    const handleContactOnChatDelete = (e, contact) => {
