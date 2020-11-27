@@ -23,7 +23,6 @@ export const reducer = (state, action) => {
 
    switch (action.type) {
       case "PROFILE":
-         console.log('profile run', i)
          if(i === -1){
             state.push({
                profile: action.payload,
@@ -35,7 +34,6 @@ export const reducer = (state, action) => {
          ]
       case "NEW_CHAT":
          if(i !== -1){
-            console.log('newchat run', action.id)
             state[i].chat.push(...action.payload)
          }
          return [
@@ -43,7 +41,6 @@ export const reducer = (state, action) => {
          ]
       case "UPDATE_CHAT":
          if(i !== -1){
-            console.log('updatechat run')
             state[i].chat.push(action.payload)
          }
          return [

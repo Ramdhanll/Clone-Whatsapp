@@ -15,7 +15,7 @@ import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { MdInsertEmoticon } from 'react-icons/md'
 import { ImAttachment } from 'react-icons/im'
 import { BsFillMicFill } from 'react-icons/bs'
-import axios from '../../helpers/axios'
+import axios from 'axios'
 import moment from 'moment'
 
 import photo from './images/landing.png'
@@ -35,7 +35,8 @@ function Chat() {
    const [profile, setProfile] = useState(null)
    const [indexAlreadyClicked, setindexAlreadyClicked] = useState([])
 
-   useEffect(() => {
+
+   useEffect( async () => {
       // INPUT FOCUS
       if(inputRef.current) {
          inputRef.current.focus()
@@ -44,12 +45,8 @@ function Chat() {
 
       // SET PROFILE
       let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
-      
-
       setProfile(chatState[indexChatState])
-      console.log('index', indexChatState)
-      
-      
+
       // SYNC MESSAGE
       setLoading(true)
       if(chatState[indexChatState]) {
@@ -57,42 +54,39 @@ function Chat() {
             setindexAlreadyClicked([...indexAlreadyClicked, indexChatState])
             axios.post('/message/sync', {
                from: localStorage.getItem('userId'),
-               to: selectProfileState
-            }, {
+               to: selectProfileState,
+            },{
                headers : {
                   'Authorization': localStorage.getItem("token")
-               }
+               },
             })
             .then( (result) => {
-               console.log('runn')
                chatDispatch({type: "NEW_CHAT", payload: result.data.messages, id: selectProfileState})
                setLoading(false)
-               if(
-                  result.data.messages[0].from === localStorage.getItem('userId') && result.data.messages[0].to === selectProfileState ||
-                  result.data.messages[0].from === selectProfileState && result.data.messages[0].to === localStorage.getItem('userId')
-               ) {
-                  setMessages(result.data.messages)
-               }
             }).catch((err) => {
                setLoading(false)
                console.log('err', err.response)
             });
          } else {
-            console.log('runn false')
             setMessages(chatState[indexChatState].chat)
             setLoading(false)
          }
-
-         
-         
       }
-      console.log('chatState', chatState)
 
       return () => {
+         setProfile(null)
          setMessages([])
       }
 
    }, [selectProfileState])
+
+   // render messages
+   useEffect(() => {
+      let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
+      if(profile) {
+         setMessages(chatState[indexChatState].chat)
+      }
+   }, [profile])
 
    const sendMessage = () => {
       if(message.trim() === "") return
