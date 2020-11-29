@@ -24,6 +24,7 @@ import SidebarContact from './SidebarContact/SidebarContact'
 import SidebarContactOnChat from './SidebarContactOnChat/SidebarContactOnChat';
 import SidebarContactSearch from './SidebarContactSearch/SidebarContactSearch';
 
+import { UserContext } from '../../../context/UserContext';
 import { ChatContext } from '../../../context/ChatContext'
 import { SelectProfileContext } from '../../../context/SelectProfileContext';
 
@@ -44,7 +45,7 @@ function Sidebar() {
    const [activeIndex, setActiveIndex] = useState(null)
    const {chatState, chatDispatch} = useContext(ChatContext)
    const { selectProfileDispatch } = useContext(SelectProfileContext)
-
+   const { state } = useContext(UserContext)
    // get contacts
    useEffect(() => {
       setLoading(true)
@@ -228,7 +229,13 @@ function Sidebar() {
                src="https://bit.ly/dan-abramov" 
                size="md"
             />
-
+            <div style={{ 
+                  alignSelf: "center",
+                  fontSize: "20px",
+                  paddingLeft: "15px"
+                  }}>
+                     { state ? state.name : null }
+                  </div>
             <div className="sidebar__headerRight">
                <IconButton as={MdDonutLarge} 
                   variant="ghost"

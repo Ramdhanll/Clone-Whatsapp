@@ -5,7 +5,8 @@ var pusher = new Pusher({
    key: 'd7374f71e545a295d4f4',
    secret: '96a7999925ed80513928',
    cluster: 'ap1',
-   encrypted: true
+   encrypted: true,
+   // useTLS: true
 });
 
 module.exports = {pusher}

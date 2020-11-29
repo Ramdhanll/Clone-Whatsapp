@@ -10,7 +10,7 @@ import axios from 'axios'
 if (process.env.NODE_ENV === 'development') {
   axios.defaults.baseURL = 'http://localhost:9000/api/v1';
 } else {
-  axios.defaults.baseURL = process.env.APP_URI
+  axios.defaults.baseURL = `${process.env.APP_URI}/api/v1`
 }
 
 ReactDOM.render(

@@ -27,10 +27,6 @@ const send = (req, res) => {
 }
 
 const sync = (req, res) => {
-   // Messages.find(req.body, (err, messages) => {
-   //    if(err) res.status(500).json({ success: false, err})
-   //    res.status(200).json({ success: true, messages})
-   // })
    Messages.find({$or: [
       { from: req.body.from, to: req.body.to},
       { from: req.body.to, to: req.body.from},

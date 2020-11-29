@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState} from 'react'
-import Pusher from 'pusher-js'
+import Pusher, { PresenceChannel } from 'pusher-js'
 import './Chat.css';
 import { 
    Avatar, 
@@ -108,20 +108,22 @@ function Chat() {
    }
 
    // PUSHER
-
-   // useEffect(() => {
-   //    const pusher = new Pusher('d7374f71e545a295d4f4', {
-   //       cluster: 'ap1'
-   //    })
-   //    const channel = pusher.subscribe('messages')
-   //    channel.bind('inserted', function(newMessage) {
-   //       // setMessages([...messages, newMessage])
-   //    })
-   //    return () => {
-   //       channel.unbind_all()
-   //       channel.unsubscribe()
-   //    }
-   // }, [messages])
+   useEffect(() => {
+      const pusher = new Pusher('d7374f71e545a295d4f4', {
+         authEndpoint: process.env.NODE_ENV === 'development' ?  'http://localhost:9000/api/v1/pusher/auth' : `${process.env.APP_URI}/api/v1/pusher/auth`,
+         cluster: 'ap1'
+      })
+      const channel = pusher.subscribe(`private-${localStorage.getItem("userId")}`)
+      channel.bind('inserted', function(newMessage) {
+         // setMessages([...messages, newMessage])
+         console.log(newMessage)
+         alert(JSON.stringify(newMessage));
+      })
+      return () => {
+         channel.unbind_all()
+         channel.unsubscribe()
+      }
+   }, [selectProfileState])
 
    return (
       <div className="chat">

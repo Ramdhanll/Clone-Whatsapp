@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/message', require('./routes/message'))
 app.use('/api/v1/auth', require('./routes/auth'))
 app.use('/api/v1/contact', require('./routes/contact'))
+app.use('/api/v1/pusher', require('./routes/pusher'))
 
 
 // DB Config
@@ -38,15 +39,11 @@ mongoose.connect(config.mongoURI,
       const messageCollection = result.connection.collection('messages')
       const changeSteram = messageCollection.watch()
       changeSteram.on('change', (change) => {
-         // console.log(change)
+         console.log(change)
          if(change.operationType === 'insert') {
             const messageDetails = change.fullDocument
-            pusher.trigger('messages', 'inserted', {
-               _id: messageDetails._id,
-               message: messageDetails.message,
-               name: messageDetails.name,
-               received: messageDetails.received,
-               timestamp: messageDetails.timestamp
+            pusher.trigger(`private-${messageDetails.to}`, 'inserted', {
+               ...messageDetails
             })
          }
       })
