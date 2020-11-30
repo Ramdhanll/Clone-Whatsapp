@@ -25,15 +25,30 @@ import _ from 'lodash'
 import { ChatContext } from '../../context/ChatContext'
 import { SelectProfileContext } from '../../context/SelectProfileContext'
 
+import useStateWithCallback from 'use-state-with-callback'
+
 function Chat() {
    const { chatState, chatDispatch } = useContext(ChatContext)
    const { selectProfileState } = useContext(SelectProfileContext)
    const inputRef = useRef(null)
-   const [messages, setMessages] = useState([])
+   const [messages, setMessages] = useStateWithCallback([], messages => {
+      if(messages.length > 0 ) scrollToBottom()
+   })
    const [message, setMessage] = useState("")
    const [loading, setLoading] = useState(false)
    const [profile, setProfile] = useState(null)
    const [indexAlreadyClicked, setindexAlreadyClicked] = useState([])
+   const chatBodyRef = useRef()
+
+   // scroll to bottom after get new message
+   const scrollToBottom = () => {
+      if(chatBodyRef.current !== undefined) {
+         return chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight - (chatBodyRef.current.clientHeight)
+      }
+   }
+   useEffect(() => {
+      if(chatBodyRef.current !== undefined) chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight - (chatBodyRef.current.clientHeight)
+   }, [messages])
 
 
    useEffect( async () => {
@@ -60,7 +75,7 @@ function Chat() {
                   'Authorization': localStorage.getItem("token")
                },
             })
-            .then( (result) => {
+            .then((result) => {
                chatDispatch({type: "NEW_CHAT", payload: result.data.messages, id: selectProfileState})
                setLoading(false)
             }).catch((err) => {
@@ -69,9 +84,11 @@ function Chat() {
             });
          } else {
             setMessages(chatState[indexChatState].chat)
+            chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight - (chatBodyRef.current.clientHeight)
             setLoading(false)
          }
-      }
+      }      
+
 
       return () => {
          setProfile(null)
@@ -81,15 +98,23 @@ function Chat() {
    }, [selectProfileState])
 
    // render messages
-   useEffect(() => {
+   useEffect( async () => {
       let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
       if(profile) {
          setMessages(chatState[indexChatState].chat)
       }
+      console.log('chatState', chatState[indexChatState])
    }, [profile])
 
    const sendMessage = () => {
       if(message.trim() === "") return
+      setMessages([...messages, {
+         from: localStorage.getItem("userId"),
+         read: false,
+         text: message,
+         to: selectProfileState,
+      }])
+      setMessage("")
 
       axios.post('/message/send', {
          from: localStorage.getItem("userId"),
@@ -101,9 +126,9 @@ function Chat() {
          }
       })
       .then((result) => {
-         setMessages([...messages, result.data.message])
          chatDispatch({type: "UPDATE_CHAT", payload: result.data.message, id: selectProfileState})
-         setMessage("")
+      }).catch(() => {
+         messages.pop()
       })
    }
 
@@ -115,15 +140,15 @@ function Chat() {
       })
       const channel = pusher.subscribe(`private-${localStorage.getItem("userId")}`)
       channel.bind('inserted', function(newMessage) {
-         // setMessages([...messages, newMessage])
+         chatDispatch({type: "UPDATE_CHAT", payload: newMessage, id: newMessage.from})
          console.log(newMessage)
-         alert(JSON.stringify(newMessage));
+
       })
       return () => {
          channel.unbind_all()
          channel.unsubscribe()
       }
-   }, [selectProfileState])
+   }, [])
 
    return (
       <div className="chat">
@@ -169,7 +194,7 @@ function Chat() {
                         </Menu>
                         </div>
                      </div>
-                     <div className="chat__body">
+                     <div className="chat__body" ref={chatBodyRef}>
                         {
                            !loading ? (
                               messages.map((message, index) => {

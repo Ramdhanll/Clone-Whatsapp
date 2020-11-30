@@ -20,7 +20,9 @@ function SidebarContactOnChat({contact, index, handleContactOnChatClick, handleC
             <p>Last message....</p>
          </div>
       </div>
-
+         <div className="sidebarcontactonchat__countnewmessage">
+            3
+         </div>
          <div className={`sidebarcontactonchat__deletechat ${index === activeIndex ? 'active': null} `}>
             <Menu
                placement="right-start"

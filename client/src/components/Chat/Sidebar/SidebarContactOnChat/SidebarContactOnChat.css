@@ -75,3 +75,14 @@
 .active {
    background-color: #2A2F32;
 }
+
+.sidebarcontactonchat__countnewmessage {
+   align-self: center;
+   justify-content: center;
+   border-radius: 50%;
+   background-color: #00AF9C;
+   color: black;
+   text-align: center;
+   height: 25px;
+   width: 25px;
+}
