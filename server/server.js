@@ -39,7 +39,6 @@ mongoose.connect(config.mongoURI,
       const messageCollection = result.connection.collection('messages')
       const changeSteram = messageCollection.watch()
       changeSteram.on('change', (change) => {
-         console.log(change)
          if(change.operationType === 'insert') {
             const messageDetails = change.fullDocument
             pusher.trigger(`private-${messageDetails.to}`, 'inserted', {

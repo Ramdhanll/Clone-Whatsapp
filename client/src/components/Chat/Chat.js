@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState} from 'react'
-import Pusher, { PresenceChannel } from 'pusher-js'
+import Pusher from 'pusher-js'
 import './Chat.css';
 import { 
    Avatar, 
@@ -32,7 +32,9 @@ function Chat() {
    const { selectProfileState } = useContext(SelectProfileContext)
    const inputRef = useRef(null)
    const [messages, setMessages] = useStateWithCallback([], messages => {
-      if(messages.length > 0 ) scrollToBottom()
+      if(messages.length > 0 ) {
+         scrollToBottom()
+      }
    })
    const [message, setMessage] = useState("")
    const [loading, setLoading] = useState(false)
@@ -52,6 +54,7 @@ function Chat() {
 
 
    useEffect( async () => {
+      console.log(JSON.parse(localStorage.getItem('user')))
       // INPUT FOCUS
       if(inputRef.current) {
          inputRef.current.focus()
@@ -98,12 +101,11 @@ function Chat() {
    }, [selectProfileState])
 
    // render messages
-   useEffect( async () => {
+   useEffect(() => {
       let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
       if(profile) {
          setMessages(chatState[indexChatState].chat)
       }
-      console.log('chatState', chatState[indexChatState])
    }, [profile])
 
    const sendMessage = () => {
@@ -127,6 +129,12 @@ function Chat() {
       })
       .then((result) => {
          chatDispatch({type: "UPDATE_CHAT", payload: result.data.message, id: selectProfileState})
+
+         // hoki si
+         let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
+         if(result.data.message.from === localStorage.getItem("userId")) {
+            setMessages(chatState[indexChatState].chat) 
+         }
       }).catch(() => {
          messages.pop()
       })
@@ -140,9 +148,22 @@ function Chat() {
       })
       const channel = pusher.subscribe(`private-${localStorage.getItem("userId")}`)
       channel.bind('inserted', function(newMessage) {
-         chatDispatch({type: "UPDATE_CHAT", payload: newMessage, id: newMessage.from})
-         console.log(newMessage)
+         const data = {
+            read: newMessage.read,
+            _id: newMessage._id,
+            from: newMessage.from,
+            to: newMessage.to,
+            text: newMessage.text,
+            createdAt: newMessage.createdAt,
+            updatedAt: newMessage.updatedAt,
+            _v: newMessage._v,
+         }
 
+         // jika data pada chatsate ada jalankan UPDATE_CHAT
+         let indexChatState = chatState.findIndex(item => item.profile.userTo._id === data.from)
+         if(indexChatState !== -1) {
+            chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
+         }
       })
       return () => {
          channel.unbind_all()

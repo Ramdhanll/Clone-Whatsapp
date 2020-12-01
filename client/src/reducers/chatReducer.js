@@ -1,25 +1,8 @@
 export const initialState = []
 
 export const reducer = (state, action) => {
+   console.log('type', action.type)
    let i = state.findIndex(item => item.profile.userTo._id === action.id)
-   // const duplicated = () => {
-   //    for (let i = 0; i < state.length; i++) {
-   //       // check if null
-   //       if(!state[i+1]) return
-   //       if(state[i].profile._id === state[i+1].profile._id) {
-   //          state.splice(i, 1)
-   //          return
-   //       }
-
-   //       for (let j = 0; j < state.length; j++) {
-   //          if(!state[j]) return // if null return
-   //          if(i === j) continue // if i equals j skip
-   //          if(state[i].profile._id === state[j].profile._id) {
-   //             state.splice(j, 1)
-   //          }
-   //       }
-   //    }
-   // }
 
    switch (action.type) {
       case "PROFILE":
@@ -41,11 +24,20 @@ export const reducer = (state, action) => {
          ]
       case "UPDATE_CHAT":
          if(i !== -1){
-            state[i].chat.push(action.payload)
+            const length = state[i].chat.length - 1
+            if(state[i].chat[length]._id === action.payload._id){
+               return [
+                  ...state,
+               ]
+            } else {
+               state[i].chat.push(action.payload)
+               return [
+                  ...state,
+               ]
+            }
          }
-         return [
-            ...state,
-         ]
+         
+         
       case "CLEAR": 
          return null
       default:
