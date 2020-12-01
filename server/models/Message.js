@@ -33,6 +33,6 @@ const messageSchema = mongoose.Schema({
    // }
 }, { timestamps: true })
 
-const Messages = mongoose.model('Message', messageSchema)
+const Message = mongoose.model('Message', messageSchema)
 
-module.exports = {Messages}
+module.exports = Message

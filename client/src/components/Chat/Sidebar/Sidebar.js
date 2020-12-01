@@ -60,6 +60,7 @@ function Sidebar() {
          setLoading(false)
          setContactSaved(result.data.contacts)
          setContactSavedFilter(result.data.contacts)
+         console.log('contacts', result.data.contacts)
       }).catch((err) => {
          setLoading(false)
          console.log(err)
@@ -204,7 +205,6 @@ function Sidebar() {
 
       contactSaved[contactUpdated].onChat = false
       setContactSaved([...contactSaved])
-
 
       // ubah db pada server
       axios.put('/contact/delete', {

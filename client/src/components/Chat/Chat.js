@@ -92,7 +92,6 @@ function Chat() {
          }
       }      
 
-
       return () => {
          setProfile(null)
          setMessages([])
@@ -106,6 +105,7 @@ function Chat() {
       if(profile) {
          setMessages(chatState[indexChatState].chat)
       }
+      console.log(chatState)
    }, [profile])
 
    const sendMessage = () => {
