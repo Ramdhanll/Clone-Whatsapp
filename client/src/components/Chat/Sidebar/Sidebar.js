@@ -33,9 +33,9 @@ function Sidebar() {
    const [drawerAdd, setDrawerAdd] = useState(false)
    const [title, setTitle] = useState('')
    const [placeHolder, setPlaceHolder] = useState("")
+   const [contactSaved, setContactSaved] = useState([])
    const [contactSearch, setContactSearch] = useState([])
    const [contactSavedFilter, setContactSavedFilter] = useState([])
-   const [contactSaved, setContactSaved] = useState([])
    const [valueSearch, setValueSearch] = useState("")
    const timeoutRef = useRef(null)
    const contactOnChatRef = useRef(null)
@@ -46,6 +46,7 @@ function Sidebar() {
    const {chatState, chatDispatch} = useContext(ChatContext)
    const { selectProfileDispatch } = useContext(SelectProfileContext)
    const { state } = useContext(UserContext)
+
    // get contacts
    useEffect(() => {
       setLoading(true)
@@ -60,7 +61,6 @@ function Sidebar() {
          setLoading(false)
          setContactSaved(result.data.contacts)
          setContactSavedFilter(result.data.contacts)
-         console.log('contacts', result.data.contacts)
       }).catch((err) => {
          setLoading(false)
          console.log(err)
@@ -68,6 +68,7 @@ function Sidebar() {
       
    }, [])
 
+   // search contact
    useEffect(() => {
       if(valueSearch !== ""){
          setLoading(true)
@@ -99,6 +100,22 @@ function Sidebar() {
          }
       },500);
    }, [valueSearch])
+
+   // get count unread and last message
+   // useEffect(() => {
+   //    axios.post(`/message/synconchat`, {
+   //       userFrom: localStorage.getItem("userId")
+   //    }, {
+   //       headers: {
+   //          'Authorization': `Bearer ${localStorage.getItem('token')}`
+   //       }
+   //    })
+   //    .then((result) => {
+   //       console.log('unread', result)
+   //    }).catch((err) => {
+   //       console.error(err)
+   //    });
+   // }, [])
 
    const fetchContactSearch = (query) => {
       axios.post('/contact/search', {

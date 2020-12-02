@@ -34,61 +34,76 @@ const sync = (req, res) => {
 }
 
 const syncOnChat = async (req, res) => {
-   let result = []
    ContactSaved.find(req.body)
+      .populate("userTo", "_id photo name phoneNumber email")
       .exec((err, contacts) => {
-            Promise.all(contacts.map((contact, index) => 
-               Message.find({$or: [
-                  { from: contact.userFrom, to: contact.userTo},
-                  { from: contact.userTo, to: contact.userFrom},
-               ]})
-               .sort('createdAt')
-               .select(`_id read from to text`)
-            ))
-            .then((value) => {
-               console.log(value)
-               for(let i = 0; i < value.length; i++) {
-                  let data = {}
-                  let unread = value[i].filter(item => {
-                     return item.read === false && item.from !== req.body.userFrom
-                  })
-                  data.to = unread[0].to
-                  data.count = unread.length,
-                  data.lastMessage = value[i][value[i].length - 1].text
-
-                  result.push(data)
-               }
-               res.send(result)
-            })
-            
-            })
-            // console.log('result', typeof result)
-            // res.send('success')
-            /**
-             * Promise.all(map((contact, index) => // { dihapus
-                  Message.find....
-               ).then(() => console.log(result));
-             */
-
-             /**
-              * Kamu masih coding secara sync, padahal code nya async
-               Harusnya result map nya berupa hasil find itu
-               Yg mana adalah promise
-               Lalu baru promise all si array hasil map nya ini
-              */
-            
-            // if(contacts.length === index + 1) console.log('hasil', result)
-
-   // Message.find({$or: [
-   //    { from: req.body.from, to: req.body.to},
-   //    { from: req.body.to, to: req.body.from},
-   // ]})
-   // .sort('createdAt')
-   // .exec((err, messages) => {
-   //    if(err) res.status(500).json({ success: false, err})
-   //    res.status(200).json({ success: true, messages})
-   // })
+         // return res.send(contacts)
+         const mapContacts = contacts.map((contact, index) => 
+            Message.find({$or: [
+               { from: contact.userFrom, to: contact.userTo},
+               { from: contact.userTo, to: contact.userFrom},
+            ]})
+            .sort('createdAt')
+            .select(`_id read from to text`)
+         )
    
+         Promise.all([contacts, contacts.map((contact, index) => 
+            Message.find({$or: [
+               { from: contact.userFrom, to: contact.userTo},
+               { from: contact.userTo, to: contact.userFrom},
+            ]})
+            .sort('createdAt')
+            .select(`_id read from to text`)
+            .then(result => result)
+            .then(result => result)
+         )])
+         .then(async (value) => {
+               let result = []
+               value[1].map((value) => {
+                  result.push(new Promise((resolve) => {
+                     value.then(result => {
+                        const data = {}
+                        if(result.length > 0) {
+                           let unread = result.filter(item => {
+                              return item.read === false && item.from !== req.body.userFrom
+                           })
+                           data.to = unread[0].to
+                           data.unread = unread.length
+                           data.lastMessage = unread[unread.length - 1].text
+                           resolve(data)
+                        }
+                        resolve(data)
+                     })
+                  }))
+               })
+               const tempResult = await Promise.all(result)
+               const newArr = tempResult.filter(item => {
+                  if(Object.entries(item).length !== 0) {
+                     return item
+                  }
+               }).map(function(res){
+                  let contacts = value[0].find((contact, i) => {
+                     console.log(JSON.stringify(contact.userTo._id))
+                     if(JSON.stringify(contact.userTo._id) === JSON.stringify(res.to)) {
+                        console.log('ada')
+                        value[0].splice(i, 1)
+                        return contact
+                     } 
+                  })
+                  // 5fc3b34a2745a4227c078d4b 5fc3b34a2745a4227c078d4b
+                  
+                  return {
+                     ...res,
+                     contacts
+                  }               
+               })
+               newArr.push(...value[0])
+
+               // let asd = value[0].find(contact => contact.userTo == '5fad3825b8ab4924f831aed1')
+
+               res.send(newArr)
+         })
+      })
 }
 
 module.exports = {
