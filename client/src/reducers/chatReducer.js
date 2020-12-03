@@ -15,7 +15,8 @@ const countRead = (state, id) => {
 export const reducer = (state, action) => {
    
    console.log('type', action.type)
-   let i = state.findIndex(item => item.profile.userTo._id === action.id)
+   console.log('state', state)
+   let i = state.findIndex(item => item.profile.contact.userTo._id === action.id)
    
    switch (action.type) {
       case "PROFILE":

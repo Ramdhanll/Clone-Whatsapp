@@ -48,9 +48,29 @@ function Sidebar() {
    const { state } = useContext(UserContext)
 
    // get contacts
+   // useEffect(() => {
+   //    setLoading(true)
+   //    axios.post('/contact/get', {
+   //       userFrom: localStorage.getItem("userId")
+   //    }, {
+   //       headers : {
+   //          'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+   //       }
+   //    })
+   //    .then((result) => {
+   //       setLoading(false)
+   //       setContactSaved(result.data.contacts)
+   //       setContactSavedFilter(result.data.contacts)
+   //    }).catch((err) => {
+   //       setLoading(false)
+   //       console.log(err)
+   //    });
+      
+   // }, [])
+
    useEffect(() => {
       setLoading(true)
-      axios.post('/contact/get', {
+      axios.post('/message/synconchat', {
          userFrom: localStorage.getItem("userId")
       }, {
          headers : {
@@ -58,6 +78,7 @@ function Sidebar() {
          }
       })
       .then((result) => {
+         console.log(result.data.contacts)
          setLoading(false)
          setContactSaved(result.data.contacts)
          setContactSavedFilter(result.data.contacts)
@@ -101,21 +122,7 @@ function Sidebar() {
       },500);
    }, [valueSearch])
 
-   // get count unread and last message
-   // useEffect(() => {
-   //    axios.post(`/message/synconchat`, {
-   //       userFrom: localStorage.getItem("userId")
-   //    }, {
-   //       headers: {
-   //          'Authorization': `Bearer ${localStorage.getItem('token')}`
-   //       }
-   //    })
-   //    .then((result) => {
-   //       console.log('unread', result)
-   //    }).catch((err) => {
-   //       console.error(err)
-   //    });
-   // }, [])
+   
 
    const fetchContactSearch = (query) => {
       axios.post('/contact/search', {
@@ -211,8 +218,8 @@ function Sidebar() {
    // ContactOnChat
    const handleContactOnChatClick = (index, contact) => {
       setActiveIndex(index)
-      selectProfileDispatch({type: "SELECT_PROFILE", payload: contact.userTo._id}) 
-      chatDispatch({type: "PROFILE", payload: contact, id: contact.userTo._id}) 
+      selectProfileDispatch({type: "SELECT_PROFILE", payload: contact.contact.userTo._id}) 
+      chatDispatch({type: "PROFILE", payload: contact, id: contact.contact.userTo._id}) 
    }
 
    const handleContactOnChatDelete = (e, contact) => {
@@ -334,13 +341,18 @@ function Sidebar() {
          <div className="sidebar__contactonchat">
             {
                contactSaved
-                  .filter(contact => contact.onChat === true)
-                  .map((contact, index) => {
+                  .filter(data => {
+                     console.log('data', data)
+                     if(data.contact.onChat === true) {
+                        return data
+                     }
+                  })
+                  .map((data, index) => {
                      return (
                         <SidebarContactOnChat 
                            key={index}
                            index={index} 
-                           contact={contact} 
+                           contact={data} 
                            handleContactOnChatClick={handleContactOnChatClick}
                            handleContactOnChatDelete={handleContactOnChatDelete}
                            contactOnChatRef={contactOnChatRef}

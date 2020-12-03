@@ -62,7 +62,7 @@ function Chat() {
       }
 
       // SET PROFILE
-      let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
+      let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === selectProfileState)
       setProfile(chatState[indexChatState])
 
       // SYNC MESSAGE
@@ -101,7 +101,7 @@ function Chat() {
 
    // render messages
    useEffect(() => {
-      let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
+      let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === selectProfileState)
       if(profile) {
          setMessages(chatState[indexChatState].chat)
       }
@@ -131,7 +131,7 @@ function Chat() {
          chatDispatch({type: "UPDATE_CHAT", payload: result.data.message, id: selectProfileState})
 
          // hoki si
-         let indexChatState = chatState.findIndex(item => item.profile.userTo._id === selectProfileState)
+         let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === selectProfileState)
          if(result.data.message.from === localStorage.getItem("userId")) {
             setMessages(chatState[indexChatState].chat) 
          }
@@ -160,7 +160,7 @@ function Chat() {
          }
 
          // jika data pada chatsate ada jalankan UPDATE_CHAT
-         let indexChatState = chatState.findIndex(item => item.profile.userTo._id === data.from)
+         let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
          if(indexChatState !== -1) {
             chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
          }
@@ -184,7 +184,7 @@ function Chat() {
                            <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
                            <h2>
                               {                              
-                                 profile.profile.userTo.name
+                                 profile.profile.contact.userTo.name
                               }
                            </h2>
                         </div>

@@ -38,14 +38,14 @@ const syncOnChat = async (req, res) => {
       .populate("userTo", "_id photo name phoneNumber email")
       .exec((err, contacts) => {
          // return res.send(contacts)
-         const mapContacts = contacts.map((contact, index) => 
-            Message.find({$or: [
-               { from: contact.userFrom, to: contact.userTo},
-               { from: contact.userTo, to: contact.userFrom},
-            ]})
-            .sort('createdAt')
-            .select(`_id read from to text`)
-         )
+         // const mapContacts = contacts.map((contact, index) => 
+         //    Message.find({$or: [
+         //       { from: contact.userFrom, to: contact.userTo},
+         //       { from: contact.userTo, to: contact.userFrom},
+         //    ]})
+         //    .sort('createdAt')
+         //    .select(`_id read from to text`)
+         // )
    
          Promise.all([contacts, contacts.map((contact, index) => 
             Message.find({$or: [
@@ -57,51 +57,56 @@ const syncOnChat = async (req, res) => {
             .then(result => result)
             .then(result => result)
          )])
-         .then(async (value) => {
+         .then(async([contacts, messages]) => {
+            // return res.send(messages)
                let result = []
-               value[1].map((value) => {
+               messages.map((value) => {
                   result.push(new Promise((resolve) => {
                      value.then(result => {
                         const data = {}
+                        const userTo = result.find(item => {
+                           if(JSON.stringify(item.from) === JSON.stringify(req.body.userFrom)) return item
+                        })
+
                         if(result.length > 0) {
                            let unread = result.filter(item => {
-                              return item.read === false && item.from !== req.body.userFrom
+                              return item.read === false && JSON.stringify(item.from) !== JSON.stringify(req.body.userFrom)
                            })
-                           data.to = unread[0].to
+                           data.to = userTo.to
                            data.unread = unread.length
-                           data.lastMessage = unread[unread.length - 1].text
+                           data.lastMessage = result[result.length - 1].text
                            resolve(data)
                         }
                         resolve(data)
                      })
                   }))
                })
+               // tunggu sampai result mendapatkan value
                const tempResult = await Promise.all(result)
+               // filter value tempResult yang kosong
                const newArr = tempResult.filter(item => {
                   if(Object.entries(item).length !== 0) {
                      return item
                   }
-               }).map(function(res){
-                  let contacts = value[0].find((contact, i) => {
-                     console.log(JSON.stringify(contact.userTo._id))
+               })
+               .map(function(res){
+                  let contact = contacts.find((contact, i) => {
                      if(JSON.stringify(contact.userTo._id) === JSON.stringify(res.to)) {
-                        console.log('ada')
-                        value[0].splice(i, 1)
+                        contacts.splice(i, 1) // setelah mendapatkan lalu hapus data pada contacts
                         return contact
                      } 
                   })
-                  // 5fc3b34a2745a4227c078d4b 5fc3b34a2745a4227c078d4b
                   
                   return {
                      ...res,
-                     contacts
+                     contact
                   }               
                })
-               newArr.push(...value[0])
 
-               // let asd = value[0].find(contact => contact.userTo == '5fad3825b8ab4924f831aed1')
+               // sisa dari contacts di push ke newArr
+               contacts.map(contact => newArr.push({contact: contact}))
 
-               res.send(newArr)
+               res.status(200).json({ success: true, contacts: newArr})
          })
       })
 }

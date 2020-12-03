@@ -14,15 +14,18 @@ function SidebarContactOnChat({contact, index, handleContactOnChatClick, handleC
             key={index} 
             onClick={() => handleContactOnChatClick(index, contact)} 
             >
-         <Avatar name={contact.userTo.name} src={contact.userTo.photo} />
+         <Avatar name={contact.contact.userTo.name} src={contact.contact.userTo.photo} />
          <div className="sidebarcontactonchat__info">
-            <h2> {contact.userTo.name} </h2>
-            <p>Last message....</p>
+            <h2> {contact.contact.userTo.name} </h2>
+            <p className="sidebarcontactonchat__lastmessage">{ contact.lastMessage }</p>
          </div>
       </div>
-         <div className="sidebarcontactonchat__countnewmessage">
-            3
-         </div>
+         {
+            contact.unread !== 0 &&
+            <div className="sidebarcontactonchat__countnewmessage">
+               {contact.unread}
+            </div> 
+         }
          <div className={`sidebarcontactonchat__deletechat ${index === activeIndex ? 'active': null} `}>
             <Menu
                placement="right-start"
