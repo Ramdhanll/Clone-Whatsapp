@@ -78,10 +78,13 @@ function Sidebar() {
          }
       })
       .then((result) => {
-         console.log(result.data.contacts)
          setLoading(false)
          setContactSaved(result.data.contacts)
          setContactSavedFilter(result.data.contacts)
+
+         result.data.contacts.map((item) => {
+            chatDispatch({type: "PROFILE", payload: item, id: item.contact.userTo._id})
+         })
       }).catch((err) => {
          setLoading(false)
          console.log(err)
@@ -217,6 +220,7 @@ function Sidebar() {
 
    // ContactOnChat
    const handleContactOnChatClick = (index, contact) => {
+      contact.unread = 0
       setActiveIndex(index)
       selectProfileDispatch({type: "SELECT_PROFILE", payload: contact.contact.userTo._id}) 
       chatDispatch({type: "PROFILE", payload: contact, id: contact.contact.userTo._id}) 
@@ -342,7 +346,6 @@ function Sidebar() {
             {
                contactSaved
                   .filter(data => {
-                     console.log('data', data)
                      if(data.contact.onChat === true) {
                         return data
                      }

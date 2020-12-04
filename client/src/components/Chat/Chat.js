@@ -52,9 +52,7 @@ function Chat() {
       if(chatBodyRef.current !== undefined) chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight - (chatBodyRef.current.clientHeight)
    }, [messages])
 
-
    useEffect( async () => {
-      console.log(JSON.parse(localStorage.getItem('user')))
       // INPUT FOCUS
       if(inputRef.current) {
          inputRef.current.focus()
@@ -105,10 +103,11 @@ function Chat() {
       if(profile) {
          setMessages(chatState[indexChatState].chat)
       }
-      console.log(chatState)
    }, [profile])
 
    const sendMessage = () => {
+      let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === selectProfileState)
+      chatState[indexChatState].profile.unread = 0
       if(message.trim() === "") return
       setMessages([...messages, {
          from: localStorage.getItem("userId"),
@@ -159,11 +158,16 @@ function Chat() {
             _v: newMessage._v,
          }
 
+         // old
          // jika data pada chatsate ada jalankan UPDATE_CHAT
-         let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
-         if(indexChatState !== -1) {
+         // let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
+         //    // if(indexChatState !== -1) {      
+         //    //    console.log('runn')
+         //    //    chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
+         //    // }
+
             chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
-         }
+            chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.text, id: newMessage.from})
       })
       return () => {
          channel.unbind_all()

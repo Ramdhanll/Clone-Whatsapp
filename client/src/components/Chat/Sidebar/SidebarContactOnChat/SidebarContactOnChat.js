@@ -21,9 +21,9 @@ function SidebarContactOnChat({contact, index, handleContactOnChatClick, handleC
          </div>
       </div>
          {
-            contact.unread !== 0 &&
+            contact.unread > 0 &&
             <div className="sidebarcontactonchat__countnewmessage">
-               {contact.unread}
+               {Math.floor(contact.unread)}
             </div> 
          }
          <div className={`sidebarcontactonchat__deletechat ${index === activeIndex ? 'active': null} `}>
