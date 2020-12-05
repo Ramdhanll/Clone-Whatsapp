@@ -23,13 +23,13 @@ function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading,
       } else if (valueSearch === "") {
          return (
             contactSaved
-            .sort((a, b) => (a.userTo.name.toLowerCase() > b.userTo.name.toLowerCase()) ? 1 : ((b.userTo.name.toLowerCase() > a.userTo.name.toLowerCase()) ? -1 : 0))
+            .sort((a, b) => (a.contact.userTo.name.toLowerCase() > b.contact.userTo.name.toLowerCase()) ? 1 : ((b.contact.userTo.name.toLowerCase() > a.contact.userTo.name.toLowerCase()) ? -1 : 0))
             .map((contact, index) => {
-               let user = contact.userTo
+               let user = contact.contact.userTo
                
                return (
                   <div className="sidebarcontact" key={index} onClick={() => handleContactClick(contact)}>
-                     <Avatar name={user.name} src={contact.userTo.photo} />
+                     <Avatar name={user.name} src={contact.contact.userTo.photo} />
                      <div className="sidebarcontact__info">
                         <h2> {user.name} </h2>
                      </div>
@@ -42,9 +42,9 @@ function SidebarContact({contactSaved, contactSavedFilter, valueSearch, loading,
             contactSavedFilter.map((contact, index) => {
                return (
                   <div className="sidebarcontact" key={index} onClick={() => handleContactClick(contact)}>
-                     <Avatar name={contact.userTo.name} src={contact.userTo.photo} />
+                     <Avatar name={contact.contact.userTo.name} src={contact.contact.userTo.photo} />
                      <div className="sidebarcontact__info">
-                        <h2> {contact.userTo.name} </h2>
+                        <h2> {contact.contact.userTo.name} </h2>
                      </div>
                   </div>
                )

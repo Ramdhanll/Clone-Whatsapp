@@ -141,6 +141,7 @@ function Chat() {
 
    // PUSHER
    useEffect(() => {
+      console.log('pusher run')
       const pusher = new Pusher('d7374f71e545a295d4f4', {
          authEndpoint: process.env.NODE_ENV === 'development' ?  'http://localhost:9000/api/v1/pusher/auth' : `${process.env.APP_URI}/api/v1/pusher/auth`,
          cluster: 'ap1'
@@ -165,7 +166,7 @@ function Chat() {
          //    //    console.log('runn')
          //    //    chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
          //    // }
-
+            console.log('ada', newMessage)
             chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
             chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.text, id: newMessage.from})
       })

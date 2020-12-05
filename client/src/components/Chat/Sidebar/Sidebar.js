@@ -79,6 +79,7 @@ function Sidebar() {
       })
       .then((result) => {
          setLoading(false)
+         console.log(result.data.contacts)
          setContactSaved(result.data.contacts)
          setContactSavedFilter(result.data.contacts)
 
@@ -194,10 +195,10 @@ function Sidebar() {
 
    // Contact
    const handleContactClick = (contact) => {      
-      let contactUpdated = contactSaved.findIndex(contactd => {
-         return contactd._id === contact._id
+      let contactUpdated = contactSaved.findIndex(item => {
+         return item.contact._id === contact.contact._id
       })
-      contactSaved[contactUpdated].onChat = true
+      contactSaved[contactUpdated].contact.onChat = true
       setContactSaved([...contactSaved])
       chatDispatch({type: "NEW_CHAT", payload: contact})
       onClose()
@@ -205,7 +206,7 @@ function Sidebar() {
 
       // ubah db pada server
       axios.put('/contact/onchat', {
-         _id: contact._id
+         _id: contact.contact._id
       }, {
          headers :{
             'Authorization' : `Bearer ${localStorage.getItem("token")}`,
@@ -227,16 +228,16 @@ function Sidebar() {
    }
 
    const handleContactOnChatDelete = (e, contact) => {
-      let contactUpdated = contactSaved.findIndex(contactd => {
-         return contactd._id === contact._id
+      let contactUpdated = contactSaved.findIndex(item => {
+         return item.contact._id === contact.contact._id
       })
 
-      contactSaved[contactUpdated].onChat = false
+      contactSaved[contactUpdated].contact.onChat = false
       setContactSaved([...contactSaved])
 
       // ubah db pada server
       axios.put('/contact/delete', {
-         _id: contact._id
+         _id: contact.contact._id
       }, {
          headers :{
             'Authorization' : `Bearer ${localStorage.getItem("token")}`,
