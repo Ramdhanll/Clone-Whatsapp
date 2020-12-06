@@ -149,26 +149,39 @@ function Chat() {
       const channel = pusher.subscribe(`private-${localStorage.getItem("userId")}`)
       channel.bind('inserted', function(newMessage) {
          const data = {
-            read: newMessage.read,
-            _id: newMessage._id,
-            from: newMessage.from,
-            to: newMessage.to,
-            text: newMessage.text,
-            createdAt: newMessage.createdAt,
-            updatedAt: newMessage.updatedAt,
-            _v: newMessage._v,
+            read: newMessage.message.read,
+            _id: newMessage.message._id,
+            from: newMessage.message.from,
+            to: newMessage.message.to,
+            text: newMessage.message.text,
+            createdAt: newMessage.message.createdAt,
+            updatedAt: newMessage.message.updatedAt,
+            _v: newMessage.message._v,
          }
 
          // old
          // jika data pada chatsate ada jalankan UPDATE_CHAT
-         // let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
-         //    // if(indexChatState !== -1) {      
-         //    //    console.log('runn')
-         //    //    chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
-         //    // }
-            console.log('ada', newMessage)
-            chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.from})
-            chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.text, id: newMessage.from})
+         let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
+            if(indexChatState !== -1) {      
+               chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.message.from})
+               chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from})
+            } else {
+               const dataContact = {
+                  contact: {
+                     createdAt: null,
+                     onChat: true,
+                     updatedAt: null,
+                     userFrom: localStorage.getItem("userId"),
+                     userTo: newMessage.contact
+                  }
+               }
+               console.log('contact', dataContact)
+               chatDispatch({type: "PROFILE", payload: dataContact, id: data.from})
+               setTimeout(() => {
+                  console.log('chatState', chatState)
+               }, 5000);
+            }
+            
       })
       return () => {
          channel.unbind_all()

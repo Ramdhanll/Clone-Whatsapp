@@ -10,6 +10,7 @@ export const reducer = (state, action) => {
    switch (action.type) {
       case "PROFILE":
          if(i === -1){
+            console.log('state profile', action.payload)
             state.push({
                profile: action.payload,
                chat: []

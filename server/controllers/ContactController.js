@@ -7,12 +7,12 @@ const contactSaved = (req, res) => {
 
    contactSaved.save((err, doc) => {
       if(err) return res.status(400).json({ success: false, err})
-      contactSaved.populate("userTo", "_id photo name phoneNumber email", (err, contactSaved) => {
-         let result = {
-            userTo: contactSaved.userTo,
-            _id: contactSaved._id
+      contactSaved.populate("userTo", "_id photo name phoneNumber email", (err, contact) => {
+         const data = {
+            contact
          }
-         res.status(200).json({ success: true, result})
+         
+         res.status(200).json({ success: true, result : data})
       })
    })
 }

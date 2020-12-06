@@ -47,26 +47,6 @@ function Sidebar() {
    const { selectProfileDispatch } = useContext(SelectProfileContext)
    const { state } = useContext(UserContext)
 
-   // get contacts
-   // useEffect(() => {
-   //    setLoading(true)
-   //    axios.post('/contact/get', {
-   //       userFrom: localStorage.getItem("userId")
-   //    }, {
-   //       headers : {
-   //          'Authorization' : `Bearer ${localStorage.getItem("token")}`,
-   //       }
-   //    })
-   //    .then((result) => {
-   //       setLoading(false)
-   //       setContactSaved(result.data.contacts)
-   //       setContactSavedFilter(result.data.contacts)
-   //    }).catch((err) => {
-   //       setLoading(false)
-   //       console.log(err)
-   //    });
-      
-   // }, [])
 
    useEffect(() => {
       setLoading(true)
@@ -79,19 +59,35 @@ function Sidebar() {
       })
       .then((result) => {
          setLoading(false)
-         console.log(result.data.contacts)
-         setContactSaved(result.data.contacts)
-         setContactSavedFilter(result.data.contacts)
+         // setContactSaved(result.data.contacts)
+         // setContactSavedFilter(result.data.contacts)
+         console.log('result', result.data.contacts)
 
-         result.data.contacts.map((item) => {
+         result.data.contacts.map((item, index) => {
             chatDispatch({type: "PROFILE", payload: item, id: item.contact.userTo._id})
          })
+         
       }).catch((err) => {
          setLoading(false)
          console.log(err)
       });
       
    }, [])
+
+   // refresh contact on chat
+   useEffect(() => {
+      // console.log('dari sidebar', chatState)
+      // console.log('savedContact', contactSaved)
+      setContactSaved([])
+      if(chatState.length !== 0) {
+         chatState.map((item) => {
+            setContactSaved([...contactSaved, item.profile])
+            setContactSavedFilter([...contactSaved, item.profile])
+         })
+      } else {
+         console.log('kosong')
+      }
+   }, [chatState.length])
 
    // search contact
    useEffect(() => {
@@ -127,7 +123,6 @@ function Sidebar() {
    }, [valueSearch])
 
    
-
    const fetchContactSearch = (query) => {
       axios.post('/contact/search', {
          query: query
@@ -150,11 +145,11 @@ function Sidebar() {
       setLoading(true)
       let result;
 
-      result = contactSaved.filter((str) => {
-         let contact = str.userTo.name
+      result = contactSaved.filter((item) => {
+         let contact = item.contact.userTo.name
          contact.includes(valueSearch)
          if(contact.toLowerCase().includes(valueSearch.toLowerCase())) {
-            return str
+            return item
          } else {
             return false
          }
