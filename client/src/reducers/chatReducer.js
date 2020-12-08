@@ -29,7 +29,6 @@ export const reducer = (state, action) => {
       case "UPDATE_CHAT":
          if(i !== -1){
             state[i].profile.lastMessage = action.payload.text
-
             // jika panjang chat = 0 dan unread kosong/undefined jalan kode dibawah
             if(state[i].chat.length === 0 && state[i].profile.unread === undefined) {
                if(localStorage.getItem("userId") === action.payload.to) {

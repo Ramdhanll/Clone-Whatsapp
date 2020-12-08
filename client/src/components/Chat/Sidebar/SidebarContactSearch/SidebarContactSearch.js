@@ -14,7 +14,9 @@ function SidebarContactSearch({contacts, contactSearch, valueSearch, loading, ha
 
    const renderContactCondition = (contact, contacts) => {
       for (let i = 0; i < contacts.length; i++) {
-         if (contact._id === contacts[i].userTo._id) {
+         console.log('contact', contact)
+         console.log('contacts', contacts)
+         if (contact._id === contacts[i].contact.userTo._id) {
             return (
                <div className="sidebarcontactsearch__exists">
                   <Badge variant="solid" bg="#276749">

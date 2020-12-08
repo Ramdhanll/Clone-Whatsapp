@@ -8,4 +8,5 @@ router.post('/new', MessageController.messageNew)
 router.post('/send', requireLogin, MessageController.send)
 router.post('/sync', requireLogin, MessageController.sync)
 router.post('/synconchat', requireLogin, MessageController.syncOnChat)
+router.post('/test', requireLogin, MessageController.test)
 module.exports = router

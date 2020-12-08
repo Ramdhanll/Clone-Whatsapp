@@ -175,11 +175,8 @@ function Chat() {
                      userTo: newMessage.contact
                   }
                }
-               console.log('contact', dataContact)
-               chatDispatch({type: "PROFILE", payload: dataContact, id: data.from})
-               setTimeout(() => {
-                  console.log('chatState', chatState)
-               }, 5000);
+               chatDispatch({type: "PROFILE", payload: dataContact, id: data.from})               
+               // chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from})
             }
             
       })
