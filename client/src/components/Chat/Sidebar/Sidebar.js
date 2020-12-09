@@ -49,8 +49,8 @@ function Sidebar() {
 
 
    useEffect(() => {
-      setLoading(true)
-      axios.post('/message/synconchat', {
+      setLoading(true)  
+      axios.post('/message/test', {
          userFrom: localStorage.getItem("userId")
       }, {
          headers : {
@@ -59,9 +59,6 @@ function Sidebar() {
       })
       .then((result) => {
          setLoading(false)
-         // setContactSaved(result.data.contacts)
-         // setContactSavedFilter(result.data.contacts)
-         console.log('result', result.data.contacts)
 
          result.data.contacts.map((item, index) => {
             chatDispatch({type: "PROFILE", payload: item, id: item.contact.userTo._id})
@@ -76,8 +73,6 @@ function Sidebar() {
 
    // refresh contact on chat
    useEffect(() => {
-      // console.log('dari sidebar', chatState)
-      // console.log('savedContact', contactSaved)
       setContactSaved([])
       if(chatState.length !== 0) {
          chatState.map((item) => {
@@ -181,7 +176,17 @@ function Sidebar() {
             isClosable: true,
             position: "top-right"
          })
-         setContactSaved([...contactSaved, result.data.result])
+
+         let exists = contactSaved.findIndex(item => {
+            return item.contact.userTo._id === result.data.result.contact.userTo._id
+         })
+
+         if(exists === -1) {
+            chatDispatch({type: "PROFILE", payload: result.data.result, id: result.data.result.contact.userTo._id}) 
+         } else {
+            chatDispatch({type: "UPDATE_PROFILE_UNSAVED", idContact: result.data.result.contact._id , id: result.data.result.contact.userTo._id})  
+         }
+
          setValueSearch("")
       }).catch((err) => {
          alert('something wrong with server', err)
@@ -189,16 +194,16 @@ function Sidebar() {
    }
 
    // Contact
-   const handleContactClick = (contact) => {      
+   const handleContactClick = (contact) => { 
       let contactUpdated = contactSaved.findIndex(item => {
          return item.contact._id === contact.contact._id
       })
       contactSaved[contactUpdated].contact.onChat = true
       setContactSaved([...contactSaved])
-      chatDispatch({type: "NEW_CHAT", payload: contact})
+      // test hapus dulu
+      // chatDispatch({type: "NEW_CHAT", payload: contact})
       onClose()
       setActiveIndex(null)
-
       // ubah db pada server
       axios.put('/contact/onchat', {
          _id: contact.contact._id

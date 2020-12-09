@@ -7,7 +7,6 @@ import {
 } from "@chakra-ui/core";
 import { RiArrowDropDownLine } from 'react-icons/ri';
 function SidebarContactOnChat({contact, index, handleContactOnChatClick, handleContactOnChatDelete, activeIndex}) {
-   
    return (
       <div className={`sidebarcontactonchat ${index === activeIndex ? 'active': null} `}>
          <div className={`sidebarcontactonchat__left`} 

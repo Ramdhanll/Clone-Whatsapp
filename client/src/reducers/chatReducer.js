@@ -10,11 +10,18 @@ export const reducer = (state, action) => {
    switch (action.type) {
       case "PROFILE":
          if(i === -1){
-            console.log('state profile', action.payload)
             state.push({
                profile: action.payload,
                chat: []
             })
+         }
+         return [
+            ...state
+         ]
+      case "UPDATE_PROFILE_UNSAVED": 
+         if(i !== -1) {
+            state[i].profile.contact.unsaved = false
+            state[i].profile.contact._id = action.idContact
          }
          return [
             ...state
@@ -72,7 +79,6 @@ export const reducer = (state, action) => {
          if(i !== -1) {
             // aneh, harusnya ditambah 1 cuman nanti hasilnya unread =+ 2
             if(state[i].profile.unread === 0) {
-               console.log('update count run')
                state[i].profile.unread += 1
             } else {
                state[i].profile.unread += 0.5

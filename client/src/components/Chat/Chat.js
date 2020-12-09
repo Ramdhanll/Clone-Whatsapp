@@ -141,24 +141,15 @@ function Chat() {
 
    // PUSHER
    useEffect(() => {
-      console.log('pusher run')
       const pusher = new Pusher('d7374f71e545a295d4f4', {
          authEndpoint: process.env.NODE_ENV === 'development' ?  'http://localhost:9000/api/v1/pusher/auth' : `${process.env.APP_URI}/api/v1/pusher/auth`,
          cluster: 'ap1'
       })
       const channel = pusher.subscribe(`private-${localStorage.getItem("userId")}`)
       channel.bind('inserted', function(newMessage) {
-         const data = {
-            read: newMessage.message.read,
-            _id: newMessage.message._id,
-            from: newMessage.message.from,
-            to: newMessage.message.to,
-            text: newMessage.message.text,
-            createdAt: newMessage.message.createdAt,
-            updatedAt: newMessage.message.updatedAt,
-            _v: newMessage.message._v,
-         }
-
+         const {read, _id, from, to, text, createdAt, updatedAt, _v} = newMessage.message
+         const data = {read, _id, from, to, text, createdAt, updatedAt, _v}
+         console.log('adaa', newMessage)
          // old
          // jika data pada chatsate ada jalankan UPDATE_CHAT
          let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
@@ -170,13 +161,15 @@ function Chat() {
                   contact: {
                      createdAt: null,
                      onChat: true,
+                     unsaved: true,
                      updatedAt: null,
                      userFrom: localStorage.getItem("userId"),
                      userTo: newMessage.contact
                   }
                }
                chatDispatch({type: "PROFILE", payload: dataContact, id: data.from})               
-               // chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from})
+               chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.message.from})
+               chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from})
             }
             
       })

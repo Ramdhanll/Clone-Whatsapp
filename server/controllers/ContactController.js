@@ -51,7 +51,7 @@ const onChatTrue = (req, res)  => {
    .select("_id userTo onChat")
    .populate("userTo", "_id photo name phoneNumber email")
    .exec((err, contacts) => {
-      if(err) res.status(400).json({ success: false, err})
+      if(err) return res.status(400).json({ success: false, err})
       res.status(200).json({ success: true, contacts})
    })
 }

@@ -42,10 +42,8 @@ mongoose.connect(config.mongoURI,
       changeSteram.on('change', (change) => {
          if(change.operationType === 'insert') {
             const messageDetails = change.fullDocument
-            console.log('id', messageDetails.from)
             User.findById(messageDetails.from)
             .exec((err, doc) => {
-               console.log(doc)
                pusher.trigger(`private-${messageDetails.to}`, 'inserted', {
                   contact: doc,
                   message: messageDetails
