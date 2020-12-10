@@ -30,6 +30,7 @@ import useStateWithCallback from 'use-state-with-callback'
 function Chat() {
    const { chatState, chatDispatch } = useContext(ChatContext)
    const { selectProfileState } = useContext(SelectProfileContext)
+   const [indexActive, setIndexActive] = useState(null)
    const inputRef = useRef(null)
    const [messages, setMessages] = useStateWithCallback([], messages => {
       if(messages.length > 0 ) {
@@ -108,6 +109,8 @@ function Chat() {
    const sendMessage = () => {
       let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === selectProfileState)
       chatState[indexChatState].profile.unread = 0
+      chatState[indexChatState].profile.createdAt = new Date().toISOString()
+      setIndexActive(selectProfileState)
       if(message.trim() === "") return
       setMessages([...messages, {
          from: localStorage.getItem("userId"),
@@ -128,7 +131,6 @@ function Chat() {
       })
       .then((result) => {
          chatDispatch({type: "UPDATE_CHAT", payload: result.data.message, id: selectProfileState})
-
          // hoki si
          let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === selectProfileState)
          if(result.data.message.from === localStorage.getItem("userId")) {
@@ -155,7 +157,7 @@ function Chat() {
          let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
             if(indexChatState !== -1) {      
                chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.message.from})
-               chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from})
+               chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from, createdAt: newMessage.message.createdAt})
             } else {
                const dataContact = {
                   contact: {
@@ -169,7 +171,7 @@ function Chat() {
                }
                chatDispatch({type: "PROFILE", payload: dataContact, id: data.from})               
                chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.message.from})
-               chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from})
+               chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from, createdAt: newMessage.message.createdAt})
             }
             
       })
@@ -181,7 +183,7 @@ function Chat() {
 
    return (
       <div className="chat">
-         <Sidebar />
+         <Sidebar indexActiveFromChat={indexActive} />
          
          {
             profile ? 

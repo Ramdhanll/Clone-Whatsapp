@@ -84,6 +84,7 @@ export const reducer = (state, action) => {
                state[i].profile.unread += 0.5
             }
             state[i].profile.lastMessage = action.payload
+            state[i].profile.createdAt = action.createdAt
             return [
                ...state
             ]

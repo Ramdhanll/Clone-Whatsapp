@@ -39,29 +39,6 @@ function Routing() {
     }
   }, [])
 
-  // useEffect(() => {
-  //   axios.get('/message/sync')
-  //   .then((response) => {
-  //     setMessages(response.data)
-  //   }).catch((err) => {
-  //     alert('failed get messages')
-  //   });
-  // }, [])
-  
-  // useEffect(() => {
-  //   const pusher = new Pusher('d7374f71e545a295d4f4', {
-  //     cluster: 'ap1'
-  //   })
-  //   const channel = pusher.subscribe('messages')
-  //   channel.bind('inserted', function(newMessage) {
-  //     setMessages([...messages, newMessage])
-  //   })
-  //   return () => {
-  //     channel.unbind_all()
-  //     channel.unsubscribe()
-  //   }
-  // }, [messages])
-
   return (
     <Switch>
       <Route exact path="/">

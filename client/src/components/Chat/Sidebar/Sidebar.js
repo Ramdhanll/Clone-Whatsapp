@@ -19,6 +19,7 @@ import {
 import { BiDotsVerticalRounded  } from 'react-icons/bi'
 import { MdDonutLarge, MdChat } from 'react-icons/md'
 import axios from '../../../helpers/axios'
+import _ from 'lodash'
 
 import SidebarContact from './SidebarContact/SidebarContact'
 import SidebarContactOnChat from './SidebarContactOnChat/SidebarContactOnChat';
@@ -44,8 +45,26 @@ function Sidebar() {
 
    const [activeIndex, setActiveIndex] = useState(null)
    const {chatState, chatDispatch} = useContext(ChatContext)
-   const { selectProfileDispatch } = useContext(SelectProfileContext)
+   const { selectProfileState ,selectProfileDispatch } = useContext(SelectProfileContext)
+
    const { state } = useContext(UserContext)
+
+   useEffect(() => {
+      if(selectProfileState) {
+         const indexActive = _.sortBy(contactSaved, [(contact) => {
+            if(contact.createdAt === undefined) contact.createdAt = "2010-12-10T12:54:13.066Z"
+            return contact.createdAt
+         }]).reverse()
+         .filter(data => {
+            if(data.contact.onChat === true) {
+               return data
+            }
+         }).findIndex(item => item.to == selectProfileState)
+         
+         console.log('indexAcive', indexActive)
+         setActiveIndex(indexActive)
+      }
+   })
 
 
    useEffect(() => {
@@ -203,7 +222,6 @@ function Sidebar() {
       // test hapus dulu
       // chatDispatch({type: "NEW_CHAT", payload: contact})
       onClose()
-      setActiveIndex(null)
       // ubah db pada server
       axios.put('/contact/onchat', {
          _id: contact.contact._id
@@ -221,6 +239,7 @@ function Sidebar() {
 
    // ContactOnChat
    const handleContactOnChatClick = (index, contact) => {
+      console.log('onchat', activeIndex)
       contact.unread = 0
       setActiveIndex(index)
       selectProfileDispatch({type: "SELECT_PROFILE", payload: contact.contact.userTo._id}) 
@@ -345,25 +364,28 @@ function Sidebar() {
          
          <div className="sidebar__contactonchat">
             {
-               contactSaved
-                  .filter(data => {
-                     if(data.contact.onChat === true) {
-                        return data
-                     }
-                  })
-                  .map((data, index) => {
-                     return (
-                        <SidebarContactOnChat 
-                           key={index}
-                           index={index} 
-                           contact={data} 
-                           handleContactOnChatClick={handleContactOnChatClick}
-                           handleContactOnChatDelete={handleContactOnChatDelete}
-                           contactOnChatRef={contactOnChatRef}
-                           activeIndex={activeIndex}
-                           />
-                     )
-                  })
+               _.sortBy(contactSaved, [(contact) => {
+                  if(contact.createdAt === undefined) contact.createdAt = "2010-12-10T12:54:13.066Z"
+                  return contact.createdAt
+               }]).reverse()
+               .filter(data => {
+                  if(data.contact.onChat === true) {
+                     return data
+                  }
+               })
+               .map((data, index) => {
+                  return (
+                     <SidebarContactOnChat 
+                        key={index}
+                        index={index} 
+                        contact={data} 
+                        handleContactOnChatClick={handleContactOnChatClick}
+                        handleContactOnChatDelete={handleContactOnChatDelete}
+                        contactOnChatRef={contactOnChatRef}
+                        activeIndex={activeIndex}
+                        />
+                  )
+               })
             }
          </div>
 

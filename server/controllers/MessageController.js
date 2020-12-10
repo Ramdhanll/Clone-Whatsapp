@@ -53,7 +53,7 @@ const test = (req, res) => {
                   { from: {$nin: idSaved}, to: req.body.userFrom},
                ]})
                .sort("createdAt")
-               .select(`_id read from to text`)
+               .select(`_id read from to text createdAt`)
                .populate(`from to`, `_id photo name phoneNumber email`)
                .then(result => result)
       const queryContactSaved = contacts.map((contact) => 
@@ -63,7 +63,7 @@ const test = (req, res) => {
             // { from: contact.userFrom}
          ]})
          .sort('createdAt')
-         .select(`_id read from to text`)
+         .select(`_id read from to text createdAt`)
          .then(result => result)
       )
       Promise.all([contacts, queryContactSaved, queryContactUnsaved])
@@ -89,6 +89,7 @@ const test = (req, res) => {
                      if(unread.length > 0) data.to = unread[0].from
                      data.unread = unread.length
                      data.lastMessage = item[item.length - 1].text
+                     data.createdAt = item[item.length - 1].createdAt
                      resolve(data)
                   }
                   resolve(data)
@@ -157,6 +158,7 @@ const test = (req, res) => {
                   if(unread.length > 0) data.to = unread[0].from._id
                   data.unread = unread.length
                   data.lastMessage = items[items.length - 1].text
+                  data.createdAt = items[items.length - 1].createdAt
                   if(userTo !== undefined) {
                      data.contact = {}
                      data.contact.onChat = true
@@ -227,6 +229,7 @@ const syncOnChat = async (req, res) => {
 
                            data.unread = unread.length
                            data.lastMessage = item[item.length - 1].text
+                           data.createdAt = item[item.length - 1].createdAt
                            resolve(data)
                         }
                         resolve(data)

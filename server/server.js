@@ -52,7 +52,7 @@ mongoose.connect(config.mongoURI,
          }
       })
    }).catch((err) => {
-      console.log('Failed Connect')
+      console.log('Failed Connect', err)
    });
 
 
