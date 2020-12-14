@@ -29,7 +29,7 @@ import { UserContext } from '../../../context/UserContext';
 import { ChatContext } from '../../../context/ChatContext'
 import { SelectProfileContext } from '../../../context/SelectProfileContext';
 
-function Sidebar() {
+function Sidebar({refHeaderContactInfo}) {
    const { isOpen, onOpen, onClose } = useDisclosure();
    const [drawerAdd, setDrawerAdd] = useState(false)
    const [title, setTitle] = useState('')
@@ -48,7 +48,27 @@ function Sidebar() {
    const { selectProfileState ,selectProfileDispatch } = useContext(SelectProfileContext)
 
    const { state } = useContext(UserContext)
+   
+   useEffect(() => {
+      if(selectProfileState) {
+         // menghilangkan click here for contact info pada header chat
+            setTimeout(() => {
+               refHeaderContactInfo.current.classList.add('chat__animateInfoDetail')
+            }, 3000);
+            setTimeout(() => {
+               refHeaderContactInfo.current.classList.add('chat__animateInfoDetailDisplayNone')
+            }, 3950);
+      }
 
+      return () => {
+         if(refHeaderContactInfo.current !== undefined) {
+            refHeaderContactInfo.current.classList.remove('chat__animateInfoDetail')
+            refHeaderContactInfo.current.classList.remove('chat__animateInfoDetailDisplayNone')
+         }
+      }
+   }, [selectProfileState])
+   
+   // mengatur index active
    useEffect(() => {
       if(selectProfileState) {
          const indexActive = _.sortBy(contactSaved, [(contact) => {
@@ -61,7 +81,6 @@ function Sidebar() {
             }
          }).findIndex(item => item.to == selectProfileState)
          
-         console.log('indexAcive', indexActive)
          setActiveIndex(indexActive)
       }
    })

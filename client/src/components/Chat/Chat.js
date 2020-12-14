@@ -11,6 +11,7 @@ import {
    Spinner,
    
 } from "@chakra-ui/core";
+
 import { BiDotsVerticalRounded } from 'react-icons/bi'
 import { MdInsertEmoticon } from 'react-icons/md'
 import { ImAttachment } from 'react-icons/im'
@@ -26,6 +27,7 @@ import { ChatContext } from '../../context/ChatContext'
 import { SelectProfileContext } from '../../context/SelectProfileContext'
 
 import useStateWithCallback from 'use-state-with-callback'
+import SidebarProfileFriend from './Sidebar/SidebarProfileFriend/SidebarProfileFriend';
 
 function Chat() {
    const { chatState, chatDispatch } = useContext(ChatContext)
@@ -40,8 +42,10 @@ function Chat() {
    const [message, setMessage] = useState("")
    const [loading, setLoading] = useState(false)
    const [profile, setProfile] = useState(null)
+   const [isSidebarProfileFriend, setIsSidebarProfileFriend] = useState(false)
    const [indexAlreadyClicked, setindexAlreadyClicked] = useState([])
    const chatBodyRef = useRef()
+   const headerContactInfo = useRef()
 
    // scroll to bottom after get new message
    const scrollToBottom = () => {
@@ -151,7 +155,6 @@ function Chat() {
       channel.bind('inserted', function(newMessage) {
          const {read, _id, from, to, text, createdAt, updatedAt, _v} = newMessage.message
          const data = {read, _id, from, to, text, createdAt, updatedAt, _v}
-         console.log('adaa', newMessage)
          // old
          // jika data pada chatsate ada jalankan UPDATE_CHAT
          let indexChatState = chatState.findIndex(item => item.profile.contact.userTo._id === data.from)
@@ -181,22 +184,32 @@ function Chat() {
       }
    }, [])
 
+   // handleChange isSidebarProfileFriend from child
+   const handleChangeIsSidebarProfileFriend = (isopen) => {
+      setIsSidebarProfileFriend(isopen)
+   }
+   
    return (
       <div className="chat">
-         <Sidebar indexActiveFromChat={indexActive} />
+         <Sidebar refHeaderContactInfo={headerContactInfo}/>
          
          {
             profile ? 
                (
                   <div className="chat__main">
                      <div className="chat__header">
-                        <div className="chat__headerInfo">
+                        <div className="chat__headerInfo" onClick={() => setIsSidebarProfileFriend(!isSidebarProfileFriend)}>
                            <Avatar name="Dan Abrahmov" src="https://bit.ly/dan-abramov" />
-                           <h2>
-                              {                              
-                                 profile.profile.contact.userTo.name
-                              }
-                           </h2>
+                           <div className="chat__headerInfoDetail">
+                              <h2>
+                                 {                              
+                                    profile.profile.contact.userTo.name
+                                 }
+                              </h2>
+                              <p ref={headerContactInfo}>
+                                 click here for contact info
+                              </p>
+                           </div>
                         </div>
                         <div className="chat__headerRight">
                         <Menu>
@@ -308,6 +321,12 @@ function Chat() {
 
                   </div>
                )
+         }
+
+         {
+            isSidebarProfileFriend && (
+               <SidebarProfileFriend isModalOpen={isSidebarProfileFriend} handleChangeIsSidebarProfileFriend={handleChangeIsSidebarProfileFriend} />
+            )
          }
       </div>
    )
