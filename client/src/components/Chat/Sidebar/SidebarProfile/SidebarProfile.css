@@ -1,36 +1,36 @@
-.sidebarprofilefriend__photo {
+.sidebarprofile__photo {
    width: 200px;
    height: 200px;
    border-radius: 50%;
 }
 
-.sidebarprofilefriend__line {
+.sidebarprofile__line {
    height: 10px;
    width: 99%;
    background-color: #0D1317;
    margin: 20px;
 }
 
-.sidebarprofilefriend__name {
+.sidebarprofile__name {
    padding: 0px 25px;
    padding-top: 10px;
    font-size: 16px;
    align-self: flex-start;
 }
 
-.sidebarprofilefriend__detail {
+.sidebarprofile__detail {
    padding: 0px 25px;
    font-size: 16px;
    align-self: flex-start;
    width: 100%;
 }
 
-.sidebarprofilefriend__detail .title {
+.sidebarprofile__detail .title {
    font-size: 13px;
    color: #018F82;
 }
 
-.sidebarprofilefriend__detail .item {
+.sidebarprofile__detail .item {
    padding: 15px 0px;
    border-bottom: 1px solid #30383D;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import './SidebarProfileFriend.css'
+import './SidebarProfile.css'
 
 import { Button, Input, useDisclosure ,
    Drawer,
@@ -11,10 +11,12 @@ import { Button, Input, useDisclosure ,
    DrawerCloseButton,
 } from '@chakra-ui/core'
 
-function SidebarProfileFriend({isModalOpen, handleChangeIsSidebarProfileFriend, profile}) {
+function SidebarProfile({isModalOpen, handleChangeIsSidebarProfile}) {
    const { isOpen, onOpen, onClose } = useDisclosure()
+
+   const user = JSON.parse(localStorage.getItem('user'))
+
    const btnRef = React.useRef()
-   const {name, email, phoneNumber, photo, _id} = profile.profile.contact.userTo
    useEffect(() => {
       onOpen()
 
@@ -22,13 +24,14 @@ function SidebarProfileFriend({isModalOpen, handleChangeIsSidebarProfileFriend, 
 
    const handleClose = () => {
       onClose()
-      handleChangeIsSidebarProfileFriend(false)
+      handleChangeIsSidebarProfile(false)
    }
    return (
       <>
          <Drawer
          isOpen={isOpen}
-         placement="right"
+         placement="left"
+         size="410px"
          onClose={() => handleClose()}
          finalFocusRef={btnRef}
          >
@@ -43,7 +46,7 @@ function SidebarProfileFriend({isModalOpen, handleChangeIsSidebarProfileFriend, 
                   borderBottomWidth="1px"
                   borderBottomColor="#2A2F32"
                >
-                  Contact Info
+                  Profile
                </DrawerHeader>
 
                <DrawerBody
@@ -57,14 +60,14 @@ function SidebarProfileFriend({isModalOpen, handleChangeIsSidebarProfileFriend, 
                   padding="30px 0px"
                   overflow="auto"
                >
-                  <img src={photo} className="sidebarprofilefriend__photo" />
-                  <h3 className="sidebarprofilefriend__name">{name}</h3>
-                  <div className="sidebarprofilefriend__line"></div>
+                  <img src={user.photo} className="sidebarprofile__photo" />
+                  <h3 className="sidebarprofile__name">{user.name}</h3>
+                  <div className="sidebarprofile__line"></div>
 
-                  <div className="sidebarprofilefriend__detail">
+                  <div className="sidebarprofile__detail">
                      <p className="title">About and phone number</p>
-                     <p className="item">{email}</p>
-                     <p className="item">{phoneNumber}</p>
+                     <p className="item">{user.email}</p>
+                     <p className="item">{user.phoneNumber}</p>
                   </div>
                </DrawerBody>
             </DrawerContent>
@@ -74,4 +77,4 @@ function SidebarProfileFriend({isModalOpen, handleChangeIsSidebarProfileFriend, 
    )
 }
 
-export default SidebarProfileFriend
+export default SidebarProfile

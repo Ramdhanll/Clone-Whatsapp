@@ -325,7 +325,11 @@ function Chat() {
 
          {
             isSidebarProfileFriend && (
-               <SidebarProfileFriend isModalOpen={isSidebarProfileFriend} handleChangeIsSidebarProfileFriend={handleChangeIsSidebarProfileFriend} />
+               <SidebarProfileFriend 
+               isModalOpen={isSidebarProfileFriend} 
+               handleChangeIsSidebarProfileFriend={handleChangeIsSidebarProfileFriend}
+               profile={profile}
+               />
             )
          }
       </div>

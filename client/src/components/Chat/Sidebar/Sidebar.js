@@ -28,9 +28,11 @@ import SidebarContactSearch from './SidebarContactSearch/SidebarContactSearch';
 import { UserContext } from '../../../context/UserContext';
 import { ChatContext } from '../../../context/ChatContext'
 import { SelectProfileContext } from '../../../context/SelectProfileContext';
+import SidebarProfile from './SidebarProfile/SidebarProfile';
 
 function Sidebar({refHeaderContactInfo}) {
    const { isOpen, onOpen, onClose } = useDisclosure();
+
    const [drawerAdd, setDrawerAdd] = useState(false)
    const [title, setTitle] = useState('')
    const [placeHolder, setPlaceHolder] = useState("")
@@ -38,12 +40,14 @@ function Sidebar({refHeaderContactInfo}) {
    const [contactSearch, setContactSearch] = useState([])
    const [contactSavedFilter, setContactSavedFilter] = useState([])
    const [valueSearch, setValueSearch] = useState("")
+   const [loading, setLoading] = useState(false)
+   const [activeIndex, setActiveIndex] = useState(null)
+   const [isSidebarProfile, setIsSidebarProfile] = useState(false)
+
    const timeoutRef = useRef(null)
    const contactOnChatRef = useRef(null)
-   const [loading, setLoading] = useState(false)
    const toast = useToast()
 
-   const [activeIndex, setActiveIndex] = useState(null)
    const {chatState, chatDispatch} = useContext(ChatContext)
    const { selectProfileState ,selectProfileDispatch } = useContext(SelectProfileContext)
 
@@ -288,21 +292,28 @@ function Sidebar({refHeaderContactInfo}) {
       });
    }
 
+    // handleChange isSidebarProfile from child
+   const handleChangeIsSidebarProfile = (isopen) => {
+      setIsSidebarProfile(isopen)
+   }
+
    return (
       <div className="sidebar">
          <div className="sidebar__header">
-            <Avatar 
-               name="Dan Abrahmov" 
-               src="https://bit.ly/dan-abramov" 
-               size="md"
-            />
-            <div style={{ 
-                  alignSelf: "center",
-                  fontSize: "20px",
-                  paddingLeft: "15px"
-                  }}>
-                     { state ? state.name : null }
-                  </div>
+            <div className="sidebar__headerLeft" onClick={() => setIsSidebarProfile(!isSidebarProfile)}>
+               <Avatar 
+                  name="Dan Abrahmov" 
+                  src="https://bit.ly/dan-abramov" 
+                  size="md"
+               />
+               <div style={{ 
+                     alignSelf: "center",
+                     fontSize: "20px",
+                     paddingLeft: "15px"
+                     }}>
+                        { state ? state.name : null }
+               </div>
+            </div>
             <div className="sidebar__headerRight">
                <IconButton as={MdDonutLarge} 
                   variant="ghost"
@@ -469,6 +480,15 @@ function Sidebar({refHeaderContactInfo}) {
                </DrawerBody>
             </DrawerContent>
          </Drawer>
+      
+      {
+         isSidebarProfile && (
+            <SidebarProfile 
+               isModalOpen={isSidebarProfile} 
+               handleChangeIsSidebarProfile={handleChangeIsSidebarProfile}/>
+         )
+      }
+
       </div>
    )
 }

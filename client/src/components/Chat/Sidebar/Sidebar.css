@@ -14,6 +14,12 @@
    border-right: 1px solid #2A2F32;
 }
 
+.sidebar__headerLeft {
+   display: flex;
+   flex-direction: row;
+   cursor: pointer;
+}
+
 .sidebar__headerRight {
    display: flex;
    justify-content: space-between;
