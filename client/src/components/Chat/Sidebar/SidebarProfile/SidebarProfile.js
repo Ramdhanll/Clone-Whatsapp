@@ -9,12 +9,17 @@ import { Button, Input, useDisclosure ,
    DrawerOverlay,
    DrawerContent,
    DrawerCloseButton,
+   IconButton,
 } from '@chakra-ui/core'
+
+import {AiFillCamera} from 'react-icons/ai'
 
 function SidebarProfile({isModalOpen, handleChangeIsSidebarProfile}) {
    const { isOpen, onOpen, onClose } = useDisclosure()
 
    const user = JSON.parse(localStorage.getItem('user'))
+
+
 
    const btnRef = React.useRef()
    useEffect(() => {
@@ -25,6 +30,12 @@ function SidebarProfile({isModalOpen, handleChangeIsSidebarProfile}) {
    const handleClose = () => {
       onClose()
       handleChangeIsSidebarProfile(false)
+   }
+
+   const handleImage = () => {
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.click()
    }
    return (
       <>
@@ -60,7 +71,19 @@ function SidebarProfile({isModalOpen, handleChangeIsSidebarProfile}) {
                   padding="30px 0px"
                   overflow="auto"
                >
-                  <img src={user.photo} className="sidebarprofile__photo" />
+                  <div className="sidebarprofile__overlay" onClick={() => handleImage()}>
+                     <IconButton as={AiFillCamera} 
+                           variant="ghost"
+                           isRound="true"
+                           size="xs"
+                           color="#fff"
+                           _hover={{ cursor:'pointer' ,color: "#A0AEC0"}}
+                           _active={{ backgroundColor: '#283C45'}}
+                        />
+                        ADD PROFILE <br/> PHOTO
+                  </div>
+                     <img src={user.photo} className="sidebarprofile__photo" />
+
                   <h3 className="sidebarprofile__name">{user.name}</h3>
                   <div className="sidebarprofile__line"></div>
 

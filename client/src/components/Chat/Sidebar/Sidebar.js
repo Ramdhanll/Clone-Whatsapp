@@ -302,8 +302,8 @@ function Sidebar({refHeaderContactInfo}) {
          <div className="sidebar__header">
             <div className="sidebar__headerLeft" onClick={() => setIsSidebarProfile(!isSidebarProfile)}>
                <Avatar 
-                  name="Dan Abrahmov" 
-                  src="https://bit.ly/dan-abramov" 
+                  name={ state ? state.name : ''} 
+                  src={state ? state.photo : ''} 
                   size="md"
                />
                <div style={{ 
@@ -367,6 +367,7 @@ function Sidebar({refHeaderContactInfo}) {
                      </MenuItem>
                      <MenuItem
                         _focus={{ backgroundColor: "#131C21" }}
+                        onClick={() => setIsSidebarProfile(!isSidebarProfile)}
                      >
                         Profile
                      </MenuItem>
