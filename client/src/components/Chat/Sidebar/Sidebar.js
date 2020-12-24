@@ -18,7 +18,9 @@ import {
 } from "@chakra-ui/core";
 import { BiDotsVerticalRounded  } from 'react-icons/bi'
 import { MdDonutLarge, MdChat } from 'react-icons/md'
-import axios from '../../../helpers/axios'
+// import axios from '../../../helpers/axios'
+import axios from 'axios'
+
 import _ from 'lodash'
 
 import SidebarContact from './SidebarContact/SidebarContact'

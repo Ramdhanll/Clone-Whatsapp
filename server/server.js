@@ -27,6 +27,7 @@ app.use('/api/v1/message', require('./routes/message'))
 app.use('/api/v1/auth', require('./routes/auth'))
 app.use('/api/v1/contact', require('./routes/contact'))
 app.use('/api/v1/pusher', require('./routes/pusher'))
+app.use('/api/v1/user', require('./routes/user'))
 
 
 // DB Config

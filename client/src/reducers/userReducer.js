@@ -8,6 +8,16 @@ export const reducer = (state, action) => {
          return {
             ...state
          }
+      case "UPDATE_PHOTO":
+         state.photo = action.payload
+         const dataToLocalStorage = {
+            ...state,
+            photo: action.payload
+         }
+         localStorage.setItem("user", JSON.stringify(dataToLocalStorage))
+         return {
+            ...state
+         }
       case "CLEAR": 
          return null
       default:

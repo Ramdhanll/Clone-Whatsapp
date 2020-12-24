@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './SidebarProfile.css'
+import axios from 'axios'
 
 import { Button, Input, useDisclosure ,
    Drawer,
@@ -10,21 +11,20 @@ import { Button, Input, useDisclosure ,
    DrawerContent,
    DrawerCloseButton,
    IconButton,
+   useToast,
 } from '@chakra-ui/core'
-
 import {AiFillCamera} from 'react-icons/ai'
+import { UserContext } from '../../../../context/UserContext';
 
 function SidebarProfile({isModalOpen, handleChangeIsSidebarProfile}) {
    const { isOpen, onOpen, onClose } = useDisclosure()
-
    const user = JSON.parse(localStorage.getItem('user'))
-
-
-
+   const [url, setUrl] = useState('')
    const btnRef = React.useRef()
+   const { state, dispatch } = useContext(UserContext)
+   const toast = useToast()
    useEffect(() => {
       onOpen()
-
    }, [isModalOpen])
 
    const handleClose = () => {
@@ -32,11 +32,60 @@ function SidebarProfile({isModalOpen, handleChangeIsSidebarProfile}) {
       handleChangeIsSidebarProfile(false)
    }
 
+   // update profile
+   useEffect(() => {
+      if(url) {
+         const data = {
+            _id: user._id,
+            url: url
+         }
+         console.log(data)
+         axios.put('/user/image', data,  {
+            headers : {
+               'Authorization' : `Bearer ${localStorage.getItem("token")}`,
+            }
+         })
+         .then((result) => {
+            dispatch({type: "UPDATE_PHOTO", payload: result.data.user.photo})
+            toast({
+               title: "Photo Changed.",
+               description: "Photo changed successfully.",
+               status: "success",
+               duration: 9000,
+               isClosable: true,
+               position: "top-right"
+            })
+         }).catch((err) => {
+            console.log(err)
+         });
+      }
+   }, [url])
+
    const handleImage = () => {
       const input = document.createElement('input')
       input.type = 'file'
       input.click()
+
+
+      input.addEventListener('change', (e) => {
+         const data = new FormData()
+         const fr = new FileReader()
+         fr.readAsDataURL(e.target.files[0])
+         fr.onload = (e) => {
+            data.append("file", e.target.result)
+            data.append('upload_preset', 'wa-clone') // upload to cloudinary
+            data.append("cloud_name", "dzehd6loy")
+            axios.post("https://api.cloudinary.com/v1_1/dzehd6loy/image/upload", data)
+            .then((result) => {
+               setUrl(result.data.url)
+            }).catch((err) => {
+               console.log(err)
+            });
+            }
+         })
    }
+
+
    return (
       <>
          <Drawer
