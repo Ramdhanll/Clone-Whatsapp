@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import './Sidebar.css'
 import { 
    Avatar, 
@@ -32,9 +33,9 @@ import { ChatContext } from '../../../context/ChatContext'
 import { SelectProfileContext } from '../../../context/SelectProfileContext';
 import SidebarProfile from './SidebarProfile/SidebarProfile';
 
-function Sidebar({refHeaderContactInfo}) {
+function Sidebar({refHeaderContactInfo, handleSavedChangeSavedContactFromChild}) {
    const { isOpen, onOpen, onClose } = useDisclosure();
-
+   const history = useHistory()
    const [drawerAdd, setDrawerAdd] = useState(false)
    const [title, setTitle] = useState('')
    const [placeHolder, setPlaceHolder] = useState("")
@@ -94,7 +95,7 @@ function Sidebar({refHeaderContactInfo}) {
 
    useEffect(() => {
       setLoading(true)  
-      axios.post('/message/test', {
+      axios.post('/message/synconchat', {
          userFrom: localStorage.getItem("userId")
       }, {
          headers : {
@@ -299,6 +300,12 @@ function Sidebar({refHeaderContactInfo}) {
       setIsSidebarProfile(isopen)
    }
 
+   const handleLogout = () => {
+      localStorage.clear()
+      history.push('/login')
+      
+   }
+
    return (
       <div className="sidebar">
          <div className="sidebar__header">
@@ -380,6 +387,7 @@ function Sidebar({refHeaderContactInfo}) {
                      </MenuItem>
                      <MenuItem
                         _focus={{ backgroundColor: "#131C21" }}
+                        onClick={() => handleLogout()}
                      >
                         Log out
                      </MenuItem>
@@ -401,11 +409,11 @@ function Sidebar({refHeaderContactInfo}) {
                   if(contact.createdAt === undefined) contact.createdAt = "2010-12-10T12:54:13.066Z"
                   return contact.createdAt
                }]).reverse()
-               .filter(data => {
-                  if(data.contact.onChat === true) {
-                     return data
-                  }
-               })
+               // .filter(data => {
+               //    if(data.contact.onChat === true) {
+               //       return data
+               //    }
+               // })
                .map((data, index) => {
                   return (
                      <SidebarContactOnChat 

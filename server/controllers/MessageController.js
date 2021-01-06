@@ -43,7 +43,7 @@ const sync = (req, res) => {
    
 }
 
-const test = (req, res) => {
+const syncOnChat = (req, res) => {
    ContactSaved.find(req.body)
    .populate("userTo", "_id photo name phoneNumber email")
    .exec((err, contacts) => {
@@ -195,86 +195,85 @@ const test = (req, res) => {
    })
 }
 
-const syncOnChat = async (req, res) => {
-   ContactSaved.find(req.body)
-      .populate("userTo", "_id photo name phoneNumber email")
-      .exec((err, contacts) => {
-         Promise.all([contacts, contacts.map((contact) => 
-            Message.find({$or: [
-               { from: contact.userFrom, to: contact.userTo},
-               { from: contact.userTo, to: contact.userFrom},
-               // { from: contact.userFrom}
-            ]})
-            .sort('createdAt')
-            .select(`_id read from to text`)
-            .then(result => result)
-         )])
-         .then( async([contacts, messages]) => {
-               let result = []
-               messages.map((value) => {
-                  // push data pada variable result
-                  result.push(new Promise((resolve) => {
-                     value.then(item => {
-                        const data = {}
-                        const userTo = item.find(item => {
-                           if(JSON.stringify(item.from) === JSON.stringify(req.body.userFrom)) return item
-                        })
+// const syncOnChat = async (req, res) => {
+//    ContactSaved.find(req.body)
+//       .populate("userTo", "_id photo name phoneNumber email")
+//       .exec((err, contacts) => {
+//          Promise.all([contacts, contacts.map((contact) => 
+//             Message.find({$or: [
+//                { from: contact.userFrom, to: contact.userTo},
+//                { from: contact.userTo, to: contact.userFrom},
+//                // { from: contact.userFrom}
+//             ]})
+//             .sort('createdAt')
+//             .select(`_id read from to text`)
+//             .then(result => result)
+//          )])
+//          .then( async([contacts, messages]) => {
+//                let result = []
+//                messages.map((value) => {
+//                   // push data pada variable result
+//                   result.push(new Promise((resolve) => {
+//                      value.then(item => {
+//                         const data = {}
+//                         const userTo = item.find(item => {
+//                            if(JSON.stringify(item.from) === JSON.stringify(req.body.userFrom)) return item
+//                         })
 
-                        if(userTo !== undefined) data.to = userTo.to
-                        if(item.length > 0) {
-                           let unread = item.filter(item => {
-                              return item.read === false && JSON.stringify(item.from) !== JSON.stringify(req.body.userFrom)
-                           })
-                           if(unread.length > 0) data.to = unread[0].from
+//                         if(userTo !== undefined) data.to = userTo.to
+//                         if(item.length > 0) {
+//                            let unread = item.filter(item => {
+//                               return item.read === false && JSON.stringify(item.from) !== JSON.stringify(req.body.userFrom)
+//                            })
+//                            if(unread.length > 0) data.to = unread[0].from
 
-                           data.unread = unread.length
-                           data.lastMessage = item[item.length - 1].text
-                           data.createdAt = item[item.length - 1].createdAt
-                           resolve(data)
-                        }
-                        resolve(data)
-                     })
-                  }))
+//                            data.unread = unread.length
+//                            data.lastMessage = item[item.length - 1].text
+//                            data.createdAt = item[item.length - 1].createdAt
+//                            resolve(data)
+//                         }
+//                         resolve(data)
+//                      })
+//                   }))
 
-                  value.then(result => {
-                     result.read = true
-                  })
-               })
-               // tunggu sampai result mendapatkan value
-               const tempResult = await Promise.all(result)
-               // filter value tempResult yang kosong
-               const newArr = tempResult.filter(item => {
-                  if(Object.entries(item).length !== 0) {
-                     return item
-                  }
-               })
-               .map(function(res){
-                  let contact = contacts.find((contact, i) => {
-                     if(JSON.stringify(contact.userTo._id) === JSON.stringify(res.to)) {
-                        contacts.splice(i, 1) // setelah mendapatkan lalu hapus data pada contacts
-                        return contact
-                     } 
-                  })
+//                   value.then(result => {
+//                      result.read = true
+//                   })
+//                })
+//                // tunggu sampai result mendapatkan value
+//                const tempResult = await Promise.all(result)
+//                // filter value tempResult yang kosong
+//                const newArr = tempResult.filter(item => {
+//                   if(Object.entries(item).length !== 0) {
+//                      return item
+//                   }
+//                })
+//                .map(function(res){
+//                   let contact = contacts.find((contact, i) => {
+//                      if(JSON.stringify(contact.userTo._id) === JSON.stringify(res.to)) {
+//                         contacts.splice(i, 1) // setelah mendapatkan lalu hapus data pada contacts
+//                         return contact
+//                      } 
+//                   })
                   
-                  return {
-                     ...res,
-                     contact
-                  }               
-               })
+//                   return {
+//                      ...res,
+//                      contact
+//                   }               
+//                })
 
-               // sisa dari contacts di push ke newArr
-               contacts.map(contact => newArr.push({contact: contact}))
+//                // sisa dari contacts di push ke newArr
+//                contacts.map(contact => newArr.push({contact: contact}))
 
-               // readChat('halooo')
-               res.status(200).json({ success: true, contacts: newArr})
-         })
-      })
-}
+//                // readChat('halooo')
+//                res.status(200).json({ success: true, contacts: newArr})
+//          })
+//       })
+// }
 
 module.exports = {
    messageNew,
    send,
    sync,
    syncOnChat,
-   test
 }

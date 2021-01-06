@@ -15,6 +15,9 @@ export const reducer = (state, action) => {
                chat: []
             })
          }
+         setTimeout(() => {
+            console.log(state)
+         }, 2000);
          return [
             ...state
          ]
@@ -45,8 +48,6 @@ export const reducer = (state, action) => {
                   ]
                } 
             } 
-            
-
             // jika state[i].chat[length] tidak undefined jalankan code dibawa
             const length = state[i].chat.length - 1
             if(state[i].chat[length]) {
@@ -73,6 +74,20 @@ export const reducer = (state, action) => {
 
             return [
                ...state,
+            ]
+         }
+      case "UPDATE_COUNT_UNREAD_INSIDE_SELECTED":
+         if(i === 1) {
+            // aneh, harusnya ditambah 1 cuman nanti hasilnya unread =+ 2
+            if(state[i].profile.unread === 0) {
+               state[i].profile.unread += 1
+            } else {
+               state[i].profile.unread += 0.5
+            }
+            state[i].profile.lastMessage = action.payload
+            state[i].profile.createdAt = action.createdAt
+            return [
+               ...state
             ]
          }
       case "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED":

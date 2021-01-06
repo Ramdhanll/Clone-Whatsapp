@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const { pusher } = require('./helpers/Pusher')
 const cors = require('cors')
 const User = require('./models/User')
+const path = require('path')
 
 // app config
 const app = express()
@@ -56,7 +57,10 @@ mongoose.connect(config.mongoURI,
       console.log('Failed Connect', err)
    });
 
-
+app.use(express.static(path.join(__dirname, '../build')))
+app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../build'))
+})
 
 app.listen(PORT, () => {
    console.log(`Server listening on: ${PORT}`)

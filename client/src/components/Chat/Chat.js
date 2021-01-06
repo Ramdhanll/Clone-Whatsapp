@@ -47,6 +47,8 @@ function Chat() {
    const chatBodyRef = useRef()
    const headerContactInfo = useRef()
 
+   const [contactSaved, setContactSaved] = useState([])
+
    // scroll to bottom after get new message
    const scrollToBottom = () => {
       if(chatBodyRef.current !== undefined) {
@@ -172,6 +174,7 @@ function Chat() {
                      userTo: newMessage.contact
                   }
                }
+               console.log('adaa', dataContact)
                chatDispatch({type: "PROFILE", payload: dataContact, id: data.from})               
                chatDispatch({type: "UPDATE_CHAT", payload: data, id: newMessage.message.from})
                chatDispatch({type: "UPDATE_COUNT_UNREAD_OUTSIDE_SELECTED", payload: newMessage.message.text, id: newMessage.message.from, createdAt: newMessage.message.createdAt})
